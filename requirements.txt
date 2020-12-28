@@ -1,1 +1,6 @@
+# db
 pymysql
+
+# data process
+pandas
+numpy
