@@ -1,7 +1,10 @@
+import pandas as pd
 import pymysql
+import time
+import datetime
 
 
-def get_db_conn():
+def get_db_conn() -> pymysql.connections.Connection:
     host = '163.14.137.58'
     port = 8080
     user = 'admin'
@@ -18,33 +21,61 @@ def get_db_conn():
         print(f'error: {e}')
 
 
-def create_table(conn):
+def get_data(conn: pymysql.connections.Connection) -> list:
     with conn.cursor() as cursor:
         query = """
-        CREATE TABLE IF NOT EXISTS `teacher`( \
-        `TEACHER_ID` INT(2) NOT NULL, \
-        `FIRST_NAME` VARCHAR(20) NOT NULL, \
-        `LAST_NAME` VARCHAR(20) NOT NULL, \
-        `AGE` VARCHAR(2) NOT NULL \
-        )ENGINE=InnoDB
+        SELECT * FROM test.customer
         """
         cursor.execute(query)
+        return cursor.fetchall()
 
-def insert_data(conn):
+
+def get_data_as_df(conn: pymysql.connections.Connection) -> pd.DataFrame:
+    # return pd.read_sql_table('teacher', conn) # only supported for SQLAlchemy connectable.
+
+    query = """
+    SELECT * FROM test.customer
+    """
+    # return pd.read_sql(query, conn) # ok
+    return pd.read_sql_query(query, conn)  # ok
+
+
+def insert_data(conn: pymysql.connections.Connection):
+    """
+    columns in customer table
+    - cid : not null
+    - last_cid
+    - mid
+    - customer_img
+    - enter_time
+    - leave_time
+
+    :param conn:
+    :return:
+    """
     with conn.cursor() as cursor:
-        query = """
-        INSERT INTO `test`.`teacher` 
-        (`TEACHER_ID`, `FIRST_NAME`, `LAST_NAME`, `AGE`) 
+        # a insert example
+        cid = 'c-test'
+        customer_img = 'abs/path/to/img'
+        enter_time = datetime.datetime.now()
+        time.sleep(2)
+        leave_time = datetime.datetime.now()
+        query = f"""
+        INSERT INTO test.customer
+        (cid, customer_img, enter_time, leave_time) 
         VALUES 
-        (1, 'TOM', 'LEE', 25)
+        ('{cid}', '{customer_img}', '{enter_time}', '{leave_time}')
         """
         cursor.execute(query)
 
+if __name__ == '__main__':
+    conn = get_db_conn()
 
-conn = get_db_conn()
-# create_table(conn)
-insert_data(conn)
+    print('get data: \n', get_data(conn))
 
-conn.commit()
-conn.close()
-print('done')
+    print('get data as df: \n', get_data_as_df(conn))
+
+    insert_data(conn)
+    conn.commit()
+    conn.close()
+    print('done')
