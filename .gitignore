@@ -1,11 +1,19 @@
 # Custom
+
+## Directory
 .idea/
 WALLS/
 RAW_DATA/
 DATA/*
+
+## Extention
 *.HEIC
 *.jpg
+*.JPG
 *.png
+*.PNG
+*.mov
+*.MOV
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
