@@ -2,6 +2,7 @@
 .idea/
 WALLS/
 RAW_DATA/
+DATA/*
 *.HEIC
 *.jpg
 *.png

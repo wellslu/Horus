@@ -1,2 +1,5 @@
 # pyheif prerequisite
 sudo apt-get install libheif-dev libde265-dev
+
+# convert video with ffmpeg
+sudo apt-get install ffmpeg
