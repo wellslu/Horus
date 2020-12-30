@@ -1,6 +1,10 @@
 # Custom
 .idea/
 WALLS/
+RAW_DATA/
+*.HEIC
+*.jpg
+*.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
