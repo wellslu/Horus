@@ -1,10 +1,9 @@
 # Custom
-
 ## Directory
 .idea/
 WALLS/
-#RAW_DATA/
-#DATA/*
+RAW_DATA/
+DATA/
 
 ## Extention
 *.HEIC

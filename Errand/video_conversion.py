@@ -6,6 +6,8 @@ Create Date: 2020/12/29
 # coding: utf-8
 import os
 import pathlib
+import ntpath
+import subprocess
 import multiprocessing as mp
 
 import pyheif
@@ -18,9 +20,25 @@ def create_dir(fp):
     if not os.path.exists(fp):
         os.mkdir(fp)
 
-def convert_video():
-    pass
 
+def get_extension(fp: str) -> str:
+    return str(ntpath.basename(fp)).split('.')[-1]
+
+
+def ffmpeg_convert(src, dest):
+    subprocess.call(['ffmpeg', '-i', src, dest])
+
+
+def convert_video(src_dir: str, save_dir: str):
+    for file_name in tqdm(os.listdir(src_dir)):
+        video_path = f"{src_dir}/{file_name}"
+
+        video_ext = get_extension(video_path)
+        video_name = file_name.replace(f".{video_ext}", '')
+        save_path = f"{save_dir}/{video_name}.mp4"
+
+        if video_ext in ['MOV', 'mov']:
+            ffmpeg_convert(video_path, save_path)
 
 
 if __name__ == '__main__':
@@ -34,6 +52,4 @@ if __name__ == '__main__':
 
     SRC_DIR = f"{root_data_dir}/clips"
 
-    print(SRC_DIR, OUTPUT_DIR)
-
-
+    convert_video(SRC_DIR, OUTPUT_DIR)
