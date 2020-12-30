@@ -1,6 +1,19 @@
+# progress tool
+tqdm
+
 # db
 pymysql
 
 # data process
 pandas
 numpy
+
+# get image type
+whatimage
+
+# for HEIC to png convetion
+pyheif
+Pillow
+ExifRead
+Wand
+

@@ -1,0 +1,2 @@
+# pyheif prerequisite
+sudo apt-get install libheif-dev libde265-dev
