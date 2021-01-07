@@ -1,0 +1,3 @@
+[submodule "FaceRecog/Facer"]
+	path = FaceRecog/Facer
+	url = https://github.com/jet-chien/Facer.git
