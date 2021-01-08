@@ -74,8 +74,10 @@ def convert_images_mp(member_name: str, dir_name: str):
 
 if __name__ == '__main__':
     # get data root directory
-    project_dir = pathlib.Path(__file__).parent.parent  # horus
+    project_dir = pathlib.Path(__file__).parent.parent  # Horus
     root_data_dir = f"{project_dir}/RAW_DATA"
+
+    print(project_dir)
 
     # gen output dir
     root_output_dir = f"{project_dir}/output"

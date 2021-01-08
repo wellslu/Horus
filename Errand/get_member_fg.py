@@ -6,7 +6,14 @@ Create Date: 2021/1/8
 # coding: utf-8
 import os
 import pathlib
+from imutils.paths import list_images
+import cv2
+
+# from ..FaceRecog import Facer <- this is not allowed
+# add parent directory to path
+PROJECT_DIR = pathlib.Path(__file__).parent.parent  # Horus
 from FaceRecog.Facer.shortcut import get_face_grid_from_portrait
+
 
 def create_dir(fp: str):
     if not os.path.exists(fp):
@@ -14,12 +21,18 @@ def create_dir(fp: str):
 
 
 def get_member_fg(member_name: str, member_img_dir):
-    for img_path in os.listdir(member_img_dir):
-        pass
-        # fg = get_face_grid_from_portrait(img_path, 0.2)
-        # if fg is not None:
-        #     print(fg)
-        #     break
+    save_cnt = 0
+    for term, img_path in enumerate(list_images(member_img_dir)):
+        print(f"term: {term}")
+        fg = get_face_grid_from_portrait(img_path, 0.2)
+        if fg is not None:
+            save_cnt += 1
+            sub_dir = f"{save_dir}/{member_name}-img"
+            create_dir(sub_dir)
+            save_path = f"{sub_dir}/{member_name}_{save_cnt}.png"
+            cv2.imwrite(save_path, fg)
+            print(f"{member_name} - save count: {save_cnt}")
+
 
 
 save_dir = 'fg'
@@ -28,5 +41,9 @@ project_dir = pathlib.Path(__file__).parent.parent  # horus
 
 if __name__ == '__main__':
     mn = 'jet'
+    md = f"{project_dir}/DATA/{mn}-img"
+    get_member_fg(mn, md)
+
+    mn = 'lotus'
     md = f"{project_dir}/DATA/{mn}-img"
     get_member_fg(mn, md)
