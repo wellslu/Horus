@@ -5,6 +5,8 @@ WALLS/
 RAW_DATA/
 DATA/
 TEST-IMG/
+TEST-SAMPLE/
+MEMBER/
 
 ## Extention
 *.HEIC

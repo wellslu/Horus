@@ -30,3 +30,6 @@ cython
 # deepface
 deepface
 
+# face-recognition : https://pypi.org/project/face-recognition/
+face-recognition
+
