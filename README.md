@@ -28,6 +28,7 @@ conda create --name horus python=3.7 -y
 ### How to use
 ```
 ```
+<br>
 
 ## II. PERSON REID
 
@@ -40,6 +41,7 @@ conda create --name horus python=3.7 -y
 ### How to use
 ```
 ```
+<br>
 
 ## III. FACE RECOGNITION
 
@@ -110,3 +112,4 @@ ag_face_recog = AGFaceRecog()
 face_encode = ag_face_recog.get_face_encode(face_grid)
 result, similarity = ag_face_recog.verify_member(ls_of_know_face_encode, unknown_face_encode)
 ```
+<br>
