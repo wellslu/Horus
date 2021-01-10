@@ -1,0 +1,57 @@
+{
+  "Args": {
+    "f1": "data\\4",
+    "f2": "data\\6",
+    "output_folder": "demo/pair/4_6",
+    "sample_nums": 5,
+    "sim_threshold": 0.6,
+    "sup_threshold": 0.7,
+    "same_folder": false,
+    "save_feature": true,
+    "result_output": "demo/pair/4_6/result.json",
+    "result_table_output": "demo/pair/4_6/result.csv"
+  },
+  "Path": {
+    "f1_sample_paths": [
+      "data\\4\\117.png",
+      "data\\4\\44.png",
+      "data\\4\\10.png",
+      "data\\4\\189.png",
+      "data\\4\\32.png"
+    ],
+    "f2_sample_paths": [
+      "data\\6\\587.png",
+      "data\\6\\575.png",
+      "data\\6\\392.png",
+      "data\\6\\600.png",
+      "data\\6\\541.png"
+    ],
+    "f1_feature_paths": [
+      "demo/pair/4_6\\data_4_117.npy",
+      "demo/pair/4_6\\data_4_44.npy",
+      "demo/pair/4_6\\data_4_10.npy",
+      "demo/pair/4_6\\data_4_189.npy",
+      "demo/pair/4_6\\data_4_32.npy"
+    ],
+    "f2_feature_paths": [
+      "demo/pair/4_6\\data_6_587.npy",
+      "demo/pair/4_6\\data_6_575.npy",
+      "demo/pair/4_6\\data_6_392.npy",
+      "demo/pair/4_6\\data_6_600.npy",
+      "demo/pair/4_6\\data_6_541.npy"
+    ]
+  },
+  "Time": {
+    "extracting_features_timeuse": 0.16855525970458984,
+    "calculate_similarity_timeuse": 0.007976531982421875,
+    "Total_timeuse": 0.23040127754211426
+  },
+  "Result": {
+    "pair_nums": 25,
+    "similarity_average": 0.17300746828317642,
+    "similarity_variance": 0.0029197241712971126,
+    "support_nums": 0,
+    "match_ratio": 0.0,
+    "match_result": false
+  }
+}
