@@ -58,7 +58,9 @@ def test_face_recognition() -> bool:
     msg = f"[INFO] ({curr_stage}/{stage}) - successfully get face grid from image"
     print(msg)
 
-    from FaceRecog.Facer.Recognize.adam_geitgey import AGFaceRecog
+    from FaceRecog.Facer import AGFaceRecog
+    ag_face_recog = AGFaceRecog()
+    print(ag_face_recog)
 
 
 
