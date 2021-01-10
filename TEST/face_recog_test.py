@@ -28,7 +28,7 @@ def test_import() -> bool:
 
 def test_face_recognition() -> bool:
     global curr_stage
-    from FaceRecog.Facer.ult.data_store import load_pkl
+    from FaceRecog.Facer import data_store
     from FaceRecog.Facer.shortcut import get_face_grid_from_portrait
     from FaceRecog.Facer.Detect.face_capturer import FaceCapturer
     from FaceRecog.Facer.Detect.lmk_scanner import LMKScanner
