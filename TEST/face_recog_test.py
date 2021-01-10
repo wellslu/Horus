@@ -12,14 +12,19 @@ PROJECT_DIR = pathlib.Path(__file__).parent.parent  # Horus
 
 def test_import() -> bool:
     global curr_stage
+
+    import FaceRecog
     curr_stage += 1
     msg = f"[INFO] ({curr_stage}/{stage})- successfully import package: FaceRecog"
     print(msg)
 
+    import FaceRecog.Facer
     curr_stage += 1
     msg = f"[INFO] ({curr_stage}/{stage}) - successfully import package: FaceRecog.Facer"
     print(msg)
 
+    import FaceRecog.thirdparty.IIIDDFA
+    curr_stage += 1
     msg = f"[INFO] ({curr_stage}/{stage}) - successfully import package: FaceRecog.thirdparty.IIIDDFA"
     print(msg)
 
@@ -28,10 +33,10 @@ def test_import() -> bool:
 
 def test_face_recognition() -> bool:
     global curr_stage
-    from FaceRecog.Facer import data_store
+    from FaceRecog.Facer.ult import load_pkl
     from FaceRecog.Facer.shortcut import get_face_grid_from_portrait
-    from FaceRecog.Facer.Detect.face_capturer import FaceCapturer
-    from FaceRecog.Facer.Detect.lmk_scanner import LMKScanner
+    from FaceRecog.Facer import FaceCapturer
+    from FaceRecog.Facer import LMKScanner
 
     img = load_pkl('test-img/puff_guerlain.pkl')
 
@@ -41,8 +46,8 @@ def test_face_recognition() -> bool:
     lmk_scanner = LMKScanner()
     lmk_scanner.load_detector()
 
-    fg = get_face_grid_from_portrait(img, face_capturer, lmk_scanner)
-    if fg is None:
+    face_grid = get_face_grid_from_portrait(img, face_capturer, lmk_scanner)
+    if face_grid is None:
         return False
 
     curr_stage += 1
@@ -50,7 +55,7 @@ def test_face_recognition() -> bool:
     print(msg)
 
     from FaceRecog.thirdparty.IIIDDFA.get_pose import get_pose
-    face_pose = get_pose(fg)
+    face_pose = get_pose(face_grid)
     if face_pose is None:
         return False
 
@@ -60,9 +65,15 @@ def test_face_recognition() -> bool:
 
     from FaceRecog.Facer import AGFaceRecog
     ag_face_recog = AGFaceRecog()
-    print(ag_face_recog)
+    face_encode = ag_face_recog.get_face_encode(face_grid)
+    if face_encode is None:
+        return False
 
+    curr_stage += 1
+    msg = f"[INFO] ({curr_stage}/{stage}) - successfully get face encode"
+    print(msg)
 
+    return True
 
 
 def main():
@@ -72,10 +83,17 @@ def main():
         return
 
     check = test_face_recognition()
+    if not check:
+        print(FAILED)
+        return
+
+    print(SUCCESS)
 
 
 if __name__ == '__main__':
-    stage = 7
+    stage = 6
     curr_stage = 0
-    FAILED = 'Environment setting failed'
+    FAILED = '[VITAL] - Environment setting failed!'
+    SUCCESS = '[VITAL] - Environment setting succeed!'
+
     main()
