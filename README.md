@@ -47,21 +47,26 @@ conda create --name horus python=3.7 -y
 ```shell script
 pip install -r requirements.txt
 ```
+<br>
+
 #### check environment setting
 > clone Horus repository
 ```shell script
 git clone https://github.com/jet-chien/Horus.git
 ```
+<br>
 
 > change directory to ```TEST```
 ```shell script
 cd Horus/TEST
 ```
+<br>
 
 > run test script ```face_recog_test.py```
 ```shell script
 python face_recog_test.py
 ```
+<br>
 
 > If you get message ```[VITAL] - Environment setting succeed!``` in your terminal console, congratulations! You are able to use ```FaceRecog``` module.
 
@@ -91,6 +96,7 @@ face_grid = get_face_grid_from_portrait(img, face_capturer, lmk_scanner)
 from FaceRecog.Facer.ult import show
 show(face_grid)
 ```
+<br>
 
 #### verify faces
 ```python
