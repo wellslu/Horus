@@ -1,6 +1,7 @@
 # Horus
 A Human Tracking System
 ---
+<hr>
 <br>
 
 # Dev Environment
