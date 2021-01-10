@@ -69,6 +69,7 @@ python face_recog_test.py
 <br>
 
 > If you get message ```[VITAL] - Environment setting succeed!``` in your terminal console, congratulations! You are able to use ```FaceRecog``` module.
+<br>
 
 ### How to use
 #### to fetch face grid (face block or face roi) from img
@@ -107,3 +108,4 @@ ag_face_recog = AGFaceRecog()
 face_encode = ag_face_recog.get_face_encode(face_grid)
 result, similarity = ag_face_recog.verify_member(ls_of_know_face_encode, unknown_face_encode)
 ```
+<br>
