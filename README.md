@@ -18,6 +18,9 @@ conda create --name horus python=3.7 -y
 
 ### Folder : ```JDE```
 
+### Weight
+- https://drive.google.com/uc?id=1WxPH6WgMPQeOgrkqEu72puAxG82FRb__
+
 ### Prerequisite
 ```
 ```
