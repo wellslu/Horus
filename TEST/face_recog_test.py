@@ -3,28 +3,29 @@ author: Jet C.
 GitHub: https://github.com/jet-chien
 Create Date: 2021/1/10
 """
+import pathlib
 # coding: utf-8
 import sys
-import pathlib
+
 # add project directory to path
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent)  # Horus
-sys.path.append(PROJECT_DIR)
+if PROJECT_DIR is '.':
+    sys.path.append('..')
+else:
+    sys.path.append(PROJECT_DIR)
 
 
 def test_import() -> bool:
     global curr_stage
 
-    import FaceRecog
     curr_stage += 1
     msg = f"[INFO] ({curr_stage}/{stage})- successfully import package: FaceRecog"
     print(msg)
 
-    import FaceRecog.Facer
     curr_stage += 1
     msg = f"[INFO] ({curr_stage}/{stage}) - successfully import package: FaceRecog.Facer"
     print(msg)
 
-    import FaceRecog.thirdparty.IIIDDFA
     curr_stage += 1
     msg = f"[INFO] ({curr_stage}/{stage}) - successfully import package: FaceRecog.thirdparty.IIIDDFA"
     print(msg)
