@@ -28,7 +28,7 @@ def resize_image(image, max_size=800):
     return image
 
 
-def plot_tracking(image, save_dir, cid_png, tlwhs, obj_ids, sql, scores=None, frame_id=0, fps=0., ids2=None):
+def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, scores=None, frame_id=0, fps=0., ids2=None):
     cutomer_table = pd.DataFrame(sql.read_cutomer_table())
 
     im = np.ascontiguousarray(np.copy(image))
@@ -65,17 +65,23 @@ def plot_tracking(image, save_dir, cid_png, tlwhs, obj_ids, sql, scores=None, fr
         x1, y1, w, h = tlwh
         intbox = tuple(map(int, (x1, y1, x1 + w, y1 + h)))
         obj_id = int(obj_ids[i])
-        df = cutomer_table[cutomer_table['cid'] == str(obj_id)]
-        mid = list(df['mid'])[0]
         id_text = '{}'.format(int(obj_id))
-        if list(df['last_id'])[0] is not np.nan:
-            id_text = list(df['last_id'])[0]
+        if len(cutomer_table) == 0:
+            df = pd.DataFrame()
+        else:
+            df = cutomer_table[cutomer_table['cid'] == str(obj_id)]
+        if len(df) != 0:
+            mid = list(df['mid'])[0]
+        else:
+            mid = np.nan
+        if len(df) != 0 and list(df['last_cid'])[0] is not None:
+            id_text = list(df['last_cid'])[0]
         if ids2 is not None:
             id_text = id_text + ', {}'.format(int(ids2[i]))
         _line_thickness = 1 if obj_id <= 0 else line_thickness
         color = get_color(abs(obj_id))
         cv2.rectangle(im, intbox[0:2], intbox[2:4], color=color, thickness=line_thickness)
-        if mid is np.nan:
+        if mid is not None:
             cv2.putText(im, id_text, (intbox[0], intbox[1] + 30), cv2.FONT_HERSHEY_PLAIN,
                         text_scale, (0, 0, 255),thickness=text_thickness)
         else:
