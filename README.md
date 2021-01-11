@@ -34,6 +34,8 @@ conda create --name horus python=3.7 -y
 
 ### Folder : ```ReID```
 
+### weight
+- [google drive](https://drive.google.com/uc?id=10YKwzUB61hIYvqXAdyMslmLPyVBCr84Z) put to `ReID/pretrain`
 ### Prerequisite
 ```
 ```
