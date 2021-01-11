@@ -5,3 +5,5 @@ motmetrics
 cython_bbox
 matplotlib
 numba
+lap
+pymysql
