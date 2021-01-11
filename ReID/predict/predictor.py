@@ -17,9 +17,9 @@ import torch.multiprocessing as mp
 import torch.nn.functional as F
 from torch.nn.parallel import DistributedDataParallel
 
-from fastreid.utils.checkpoint import Checkpointer
-from fastreid.utils.registry import Registry
-from fastreid.modeling.meta_arch import build_model
+from .fastreid.utils.checkpoint import Checkpointer
+from .fastreid.utils.registry import Registry
+from .fastreid.modeling.meta_arch import build_model
 
 try:
     mp.set_start_method('spawn')

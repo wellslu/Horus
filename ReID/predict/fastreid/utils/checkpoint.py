@@ -14,7 +14,7 @@ import torch.nn as nn
 from termcolor import colored
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
-from fastreid.utils.file_io import PathManager
+from .file_io import PathManager
 
 
 class Checkpointer(object):
