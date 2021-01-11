@@ -68,7 +68,7 @@ def main():
 
 
 if __name__ == '__main__':
-    STAGE = 6
+    STAGE = 4
     curr_stage = 0
     FAILED = '[VITAL] - Environment setting failed!'
     SUCCESS = '[VITAL] - Environment setting succeed!'
