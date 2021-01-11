@@ -3,3 +3,5 @@ Pytorch >= 1.2.0
 opencv
 motmetrics
 cython_bbox
+matplotlib
+numba
