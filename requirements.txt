@@ -1,8 +1,9 @@
 # JDE
 pandas
 numpy
-opencv
+opencv-python
 motmetrics
+cython
 cython_bbox
 matplotlib
 numba
