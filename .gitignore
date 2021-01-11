@@ -1,4 +1,7 @@
 # Custom
+## File
+.DS_Store
+
 ## Directory
 .idea/
 WALLS/
