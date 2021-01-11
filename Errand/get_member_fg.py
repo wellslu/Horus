@@ -6,13 +6,14 @@ Create Date: 2021/1/8
 # coding: utf-8
 import os
 import pathlib
-from imutils.paths import list_images
+import sys
+
 import cv2
+from imutils.paths import list_images
 
 # from ..FaceRecog import Facer <- this is not allowed
-# add parent directory to path
-PROJECT_DIR = pathlib.Path(__file__).parent.parent  # Horus
-from FaceRecog.Facer.shortcut import get_face_grid_from_portrait
+PROJECT_DIR = str(pathlib.Path(__file__).parent.parent)  # Horus
+sys.path.append(PROJECT_DIR)
 
 
 def create_dir(fp: str):
