@@ -4,12 +4,13 @@ GitHub: https://github.com/jet-chien
 Create Date: 2021/1/10
 """
 # coding: utf-8
+import sys
 import pathlib
+# add project directory to path
+PROJECT_DIR = str(pathlib.Path(__file__).parent.parent)  # Horus
+sys.path.append(PROJECT_DIR)
 
-# from ..FaceRecog import Facer <- this is not allowed
-# add parent directory to path
-PROJECT_DIR = pathlib.Path(__file__).parent.parent  # Horus
-from FaceRecog.Facer.Recognize.adam_geitgey import AGFaceRecog
+from FaceRecg.Facer import AGFaceRecog
 
 if __name__ == '__main__':
     fr = AGFaceRecog()
