@@ -18,7 +18,7 @@ ExifRead
 Wand
 
 # 3DFFA
-torch>=0.4.1
+torch==0.4.1
 torchvision>=0.2.1
 numpy>=1.15.4
 scipy>=1.1.0
@@ -33,3 +33,16 @@ deepface
 # face-recognition : https://pypi.org/project/face-recognition/
 face-recognition
 
+# google drive
+gdown
+
+# package control
+pyyaml
+yacs
+
+# JDE
+motmetrics
+cython_bbox
+
+# other
+termcolor
