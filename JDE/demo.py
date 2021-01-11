@@ -32,6 +32,7 @@ from utils.timer import Timer
 from utils.parse_config import parse_model_cfg
 import utils.datasets as datasets
 from track import eval_seq
+from utils.weight_gdown import get_jde_pt
 
 
 logger.setLevel(logging.INFO)
@@ -65,12 +66,12 @@ def track(opt):
         output_video_path = osp.join(result_root, 'result.mp4')
         cmd_str = 'ffmpeg -f image2 -i {}/%05d.png -c:v copy {}'.format(osp.join(result_root, 'frame'), output_video_path)
         os.system(cmd_str)
-
         
 if __name__ == '__main__':
+    get_jde_pt()
     parser = argparse.ArgumentParser(prog='demo.py')
     parser.add_argument('--cfg', type=str, default='cfg/yolov3_1088x608.cfg', help='cfg file path')
-    parser.add_argument('--weights', type=str, default='weights/jde.1088x608.uncertainty.pt', help='path to weights file')
+    parser.add_argument('--weights', type=str, default='weights/weight.pt', help='path to weights file')
     parser.add_argument('--iou-thres', type=float, default=0.5, help='iou threshold required to qualify as detected')
     parser.add_argument('--conf-thres', type=float, default=0.5, help='object confidence threshold')
     parser.add_argument('--nms-thres', type=float, default=0.4, help='iou threshold for non-maximum suppression')
