@@ -1,6 +1,10 @@
 # JDE
-Pytorch >= 1.2.0
+pandas
+numpy
 opencv
 motmetrics
 cython_bbox
-ffmpeg
+matplotlib
+numba
+lap
+pymysql
