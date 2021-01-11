@@ -1,8 +1,9 @@
-
 # encoding: utf-8
 """
-@author: yen-nan ho
-@contact: aaron1aaron2@gmail.com
+author: yen-nan ho
+contact: aaron1aaron2@gmail.com
+gitHub: https://github.com/aaron1aaron2
+Create Date: 2021/1/5
 """
 import re
 import os
@@ -13,31 +14,28 @@ import argparse
 import itertools
 import numpy as np
 import pandas as pd
-import sys
-sys.path.append("predict") # 新增 fastreid 的 root 路徑，fastreid 才能呼叫到自己
 
 import cv2
 from torch.backends import cudnn
 
+from utils import get_data
 from predict.fastreid.config import get_cfg
 from predict.predictor import FeatureExtractionDemo
 
 cudnn.benchmark = True
 
-__all__ = ["ReidMatch", "get_group"]
+__all__ = ["ReidMatch"]
 
 class ReidMatch(FeatureExtractionDemo):
-    def __init__(self, config_file, model_file, example_img, parallel=False):
+    def __init__(self, model_file, example_img, parallel=False):
         """
         Args:
-            config_file (str)
-            model_file (str)
+            model_file (str): pretrain folder, Must contain `config.yaml` and `model_final.pth` under folder.
             parallel (bool): whether to run the model in different processes from visualization.
 
         Functions:
             run_on_image: Use the pre-trained model to convert the input image(`original_image`)
-                into feature vectors(shape: (1, 2048)). 
-                (Inherited from class `FeatureExtractionDemo`)
+                          into feature vectors(shape: (1, 2048)). (Inherited from class `FeatureExtractionDemo`)
 
             cosine_similarity: Calculate the cosine similarity between vector `a` and vector `b`
 
@@ -50,14 +48,16 @@ class ReidMatch(FeatureExtractionDemo):
             image_to_feature
 
         """
-        self._check_args(config_file, model_file)
-        self.cfg = self._set_config(config_file, model_file)
+        self.config_file = os.path.join(model_file, "config.yaml")
+        self.model_file = os.path.join(model_file, "model_final.pth")
+        self.parallel = parallel
+
+        self._check_data(model_file)
+        self.cfg = self._set_config()
         super(ReidMatch, self).__init__(self.cfg, parallel)
         self._warm_up_model(example_img)
 
-        self.config_file = config_file
-        self.model_file = model_file
-        self.parallel = parallel
+
 
     def match_two_folder(self, f1, f2, output_folder, sample_nums, sim_threshold, sup_threshold, sample_in_bin,
                          same_folder=False, save_feature=True, result_output=None, result_table_output=None):
@@ -270,17 +270,18 @@ class ReidMatch(FeatureExtractionDemo):
         _ = self.image_to_feature(path)
         print("time use: ", time.time()-start_time)
 
-    def _check_args(self, config_file, model_file):
-        local_vars = locals()
-        local_vars = {i:local_vars[i] for i in local_vars if i in ["config_file", "model_file"]}
-        
-        for v in local_vars:
-            assert os.path.exists(local_vars[v]), "[{}] Can't find file at {}".format(v, local_vars[v])
+    def _check_data(self, root_path):
+        if (not os.path.exists(self.config_file)) | (not os.path.exists(self.model_file)):
+            print("Can't find pretrain model. start downloading...")
+            get_data(root_path)
+
+        for i in [self.config_file, self.model_file]:
+            assert os.path.exists(i), "Can't find file at {}".format(i)
             
-    def _set_config(self, config_file, model_file):
+    def _set_config(self):
         cfg = get_cfg()
-        cfg.merge_from_file(config_file)
-        cfg.MODEL.WEIGHTS = model_file
+        cfg.merge_from_file(self.config_file)
+        cfg.MODEL.WEIGHTS = self.model_file
         cfg.freeze()
 
         return cfg
@@ -304,9 +305,8 @@ class ReidMatch(FeatureExtractionDemo):
 
 if __name__ == '__main__':
 
-    demo = ReidMatch(config_file="predict/logs/market1501/bagtricks_R50/config.yaml",
-                     model_file="predict/logs/market1501/bagtricks_R50/model_final.pth",
-                     example_img="predict/img_example.png", # image to warm up model.
+    demo = ReidMatch(model_file="ReID/pretrain_model",
+                     example_img="ReID/predict/img_example.png", # image to warm up model.
                      parallel=False)
 
     result = demo.match_two_folder('data/1', 'data/2', output_folder="demo/test", 
