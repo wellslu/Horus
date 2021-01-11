@@ -6,11 +6,16 @@
 @Create Date: 2021/1/5
 """
 
-import sys
 import pathlib
+# coding: utf-8
+import sys
+
 # add project directory to path
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent)  # Horus
-sys.path.append(PROJECT_DIR)
+if PROJECT_DIR is '.':
+    sys.path.append('..')
+else:
+    sys.path.append(PROJECT_DIR)
 
 
 def test_import() -> bool:

@@ -6,7 +6,6 @@ pymysql
 
 # data process
 pandas
-numpy
 
 # get image type
 whatimage
@@ -18,12 +17,12 @@ ExifRead
 Wand
 
 # 3DFFA
-torch==0.4.1
 torchvision>=0.2.1
 numpy>=1.15.4
 scipy>=1.1.0
 matplotlib==3.0.2
-dlib==19.5.0 # 19.15+ version may cause conflict with pytorch, this may take several minutes
+# dlib==19.5.0 # 19.15+ version may cause conflict with pytorch, this may take several minutes
+dlib
 opencv-python>=3.4.3.18
 cython
 
@@ -43,6 +42,10 @@ yacs
 # JDE
 motmetrics
 cython_bbox
+
+# FaceRecog
+imutils
+opencv-contrib-python
 
 # other
 termcolor
