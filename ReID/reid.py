@@ -1,9 +1,9 @@
 # encoding: utf-8
 """
-author: yen-nan ho
-contact: aaron1aaron2@gmail.com
-gitHub: https://github.com/aaron1aaron2
-Create Date: 2021/1/5
+@author: yen-nan ho
+@contact: aaron1aaron2@gmail.com
+@gitHub: https://github.com/aaron1aaron2
+@Create Date: 2021/1/5
 """
 import re
 import os
@@ -18,9 +18,9 @@ import pandas as pd
 import cv2
 from torch.backends import cudnn
 
-from utils import get_data
-from predict.fastreid.config import get_cfg
-from predict.predictor import FeatureExtractionDemo
+from .utils import get_data
+from .predict.fastreid.config import get_cfg
+from .predict.predictor import FeatureExtractionDemo
 
 cudnn.benchmark = True
 
