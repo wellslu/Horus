@@ -8,7 +8,6 @@
 import zipfile
 import os
 import shutil
-from IPython import embed
 
 __all__ = ["get_data"]
 
