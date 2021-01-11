@@ -38,7 +38,7 @@ def test_face_recognition() -> bool:
     from FaceRecog.Facer import FaceCapturer
     from FaceRecog.Facer import LMKScanner
 
-    img = load_pkl('test-img/puff_guerlain.pkl')
+    img = load_pkl(img_pkl_path)
 
     face_capturer = FaceCapturer()
     face_capturer.load_detector()
@@ -93,6 +93,7 @@ def main():
 if __name__ == '__main__':
     stage = 6
     curr_stage = 0
+    img_pkl_path = 'test_img/puff_guerlain.pkl'
     FAILED = '[VITAL] - Environment setting failed!'
     SUCCESS = '[VITAL] - Environment setting succeed!'
 
