@@ -47,5 +47,8 @@ cython_bbox
 imutils
 opencv-contrib-python
 
+# ReID
+ipython
+
 # other
 termcolor
