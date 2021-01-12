@@ -53,7 +53,7 @@ def test_face_recognition() -> bool:
         return False
 
     curr_stage += 1
-    msg = f"[INFO] ({curr_stage}/{stage}) - successfully get face grid from image"
+    msg = f"[INFO] ({curr_stage}/{stage}) - successfully get face grid from image. Face Grid Shape: {face_grid.shape}"
     print(msg)
 
     from FaceRecog.thirdparty.IIIDDFA.get_pose import get_pose
@@ -61,8 +61,10 @@ def test_face_recognition() -> bool:
     if face_pose is None:
         return False
 
+    yaw, pitch, roll = face_pose
+
     curr_stage += 1
-    msg = f"[INFO] ({curr_stage}/{stage}) - successfully get face grid from image"
+    msg = f"[INFO] ({curr_stage}/{stage}) - successfully get face pose from image. Yaw: {yaw}  Pitch: {pitch} Roll: {roll}"
     print(msg)
 
     from FaceRecog.Facer import AGFaceRecog
