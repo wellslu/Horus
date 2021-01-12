@@ -6,15 +6,15 @@ import argparse
 import motmetrics as mm
 
 import torch
-from tracker.multitracker import JDETracker
-from utils import visualization as vis
-from utils.log import logger
-from utils.timer import Timer
-from utils.evaluation import Evaluator
-from utils.parse_config import parse_model_cfg
-import utils.datasets as datasets
-from utils.utils import *
-from utils.sql import SQL
+from JDE.tracker.multitracker import JDETracker
+from JDE.utils import visualization as vis
+from JDE.utils.log import logger
+from JDE.utils.timer import Timer
+from JDE.utils.evaluation import Evaluator
+from JDE.utils.parse_config import parse_model_cfg
+import JDE.utils.datasets as datasets
+from JDE.utils.utils import *
+from JDE.utils.sql import SQL
 
 
 def write_results(filename, results, data_type):
@@ -91,16 +91,16 @@ def eval_seq(opt, dataloader, data_type, result_filename, cid_png=None, save_dir
         # run tracking
         timer.tic()
         blob = torch.from_numpy(img).cuda().unsqueeze(0)
-        online_targets = tracker.update(blob, img0)
-        online_tlwhs = []
-        online_ids = []
-        for t in online_targets:
-            tlwh = t.tlwh
-            tid = t.track_id
-            vertical = tlwh[2] / tlwh[3] > 1.6
-            if tlwh[2] * tlwh[3] > opt.min_box_area and not vertical:
-                online_tlwhs.append(tlwh)
-                online_ids.append(tid)
+        online_ids, online_tlwhs = tracker.update(blob, img0)
+        # online_tlwhs = []
+        # online_ids = []
+        # for t in online_targets:
+        #     tlwh = t.tlwh
+        #     tid = t.track_id
+        #     vertical = tlwh[2] / tlwh[3] > 1.6
+        #     if tlwh[2] * tlwh[3] > opt.min_box_area and not vertical:
+        #         online_tlwhs.append(tlwh)
+        #         online_ids.append(tid)
         timer.toc()
         # save results
         results.append((frame_id + 1, online_tlwhs, online_ids))

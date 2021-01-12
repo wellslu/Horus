@@ -1,10 +1,11 @@
 from numba import jit
 from collections import deque
 import torch
-from utils.kalman_filter import KalmanFilter
-from utils.log import logger
-from models import *
-from tracker import matching
+import time
+from JDE.utils.kalman_filter import KalmanFilter
+from JDE.utils.log import logger
+from JDE.models import *
+from JDE.tracker import matching
 from .basetrack import BaseTrack, TrackState
 
 
@@ -25,14 +26,14 @@ class STrack(BaseTrack):
         self.update_features(temp_feat)
         self.features = deque([], maxlen=buffer_size)
         self.alpha = 0.9
-    
+
     def update_features(self, feat):
         feat /= np.linalg.norm(feat)
-        self.curr_feat = feat 
+        self.curr_feat = feat
         if self.smooth_feat is None:
             self.smooth_feat = feat
         else:
-            self.smooth_feat = self.alpha *self.smooth_feat + (1-self.alpha) * feat
+            self.smooth_feat = self.alpha * self.smooth_feat + (1 - self.alpha) * feat
         self.features.append(feat)
         self.smooth_feat /= np.linalg.norm(self.smooth_feat)
 
@@ -41,7 +42,7 @@ class STrack(BaseTrack):
         if self.state != TrackState.Tracked:
             mean_state[7] = 0
         self.mean, self.covariance = self.kalman_filter.predict(mean_state, self.covariance)
-        
+
     @staticmethod
     def multi_predict(stracks, kalman_filter):
         if len(stracks) > 0:
@@ -50,7 +51,7 @@ class STrack(BaseTrack):
             for i, st in enumerate(stracks):
                 if st.state != TrackState.Tracked:
                     multi_mean[i][7] = 0
-#            multi_mean, multi_covariance = STrack.kalman_filter.multi_predict(multi_mean, multi_covariance)
+            #            multi_mean, multi_covariance = STrack.kalman_filter.multi_predict(multi_mean, multi_covariance)
             multi_mean, multi_covariance = kalman_filter.multi_predict(multi_mean, multi_covariance)
             for i, (mean, cov) in enumerate(zip(multi_mean, multi_covariance)):
                 stracks[i].mean = mean
@@ -59,12 +60,12 @@ class STrack(BaseTrack):
     def activate(self, kalman_filter, frame_id):
         """Start a new tracklet"""
         self.kalman_filter = kalman_filter
-        self.track_id = self.next_id()
+        self.track_id = int(str(hash(time.time()))[-2:] + str(self.next_id())[-2:])
         self.mean, self.covariance = self.kalman_filter.initiate(self.tlwh_to_xyah(self._tlwh))
 
         self.tracklet_len = 0
         self.state = TrackState.Tracked
-        #self.is_activated = True
+        # self.is_activated = True
         self.frame_id = frame_id
         self.start_frame = frame_id
 
@@ -79,7 +80,7 @@ class STrack(BaseTrack):
         self.is_activated = True
         self.frame_id = frame_id
         if new_id:
-            self.track_id = self.next_id()
+            self.track_id = int(str(hash(time.time()))[-2:] + str(self.next_id())[-2:])
 
     def update(self, new_track, frame_id, update_feature=True):
         """
@@ -198,9 +199,9 @@ class JDETracker(object):
         """
 
         self.frame_id += 1
-        activated_starcks = []      # for storing active tracks, for the current frame
-        refind_stracks = []         # Lost Tracks whose detections are obtained in the current frame
-        lost_stracks = []           # The tracks which are not obtained in the current frame but are not removed.(Lost for some time lesser than the threshold for removing)
+        activated_starcks = []  # for storing active tracks, for the current frame
+        refind_stracks = []  # Lost Tracks whose detections are obtained in the current frame
+        lost_stracks = []  # The tracks which are not obtained in the current frame but are not removed.(Lost for some time lesser than the threshold for removing)
         removed_stracks = []
 
         t1 = time.time()
@@ -244,7 +245,6 @@ class JDETracker(object):
         # Predict the current location with KF
         STrack.multi_predict(strack_pool, self.kalman_filter)
 
-
         dists = matching.embedding_distance(strack_pool, detections)
         # dists = matching.gate_cost_matrix(self.kalman_filter, dists, strack_pool, detections)
         dists = matching.fuse_motion(self.kalman_filter, dists, strack_pool, detections)
@@ -269,7 +269,7 @@ class JDETracker(object):
         ''' Step 3: Second association, with IOU'''
         detections = [detections[i] for i in u_detection]
         # detections is now a list of the unmatched detections
-        r_tracked_stracks = [] # This is container for stracks which were tracked till the
+        r_tracked_stracks = []  # This is container for stracks which were tracked till the
         # previous frame but no detection was found for it in the current frame
         for i in u_track:
             if strack_pool[i].state == TrackState.Tracked:
@@ -337,16 +337,41 @@ class JDETracker(object):
         self.removed_stracks.extend(removed_stracks)
         self.tracked_stracks, self.lost_stracks = remove_duplicate_stracks(self.tracked_stracks, self.lost_stracks)
 
-        # get scores of lost tracks
         output_stracks = [track for track in self.tracked_stracks if track.is_activated]
+        online_tlwhs = []
+        online_ids = []
+        for t in output_stracks:
+            tlwh = t.tlwh
+            vertical = tlwh[2] / tlwh[3] > 1.6
+            if tlwh[2] * tlwh[3] > self.opt.min_box_area and not vertical:
+                online_tlwhs.append(tlwh)
+                online_ids.append(t.track_id)
+        # for i in range(len(output_stracks)):
+        #     tlwh = output_stracks[i].tlwh
+        #     vertical = tlwh[2] / tlwh[3] > 1.6
+        #     if tlwh[2] * tlwh[3] > self.opt.min_box_area and not vertical:
+        #         x1, y1, w1, h1 = tlwh
+        #         for n in range(len(online_tlwhs)):
+        #             tlwh_n = online_tlwhs[n]
+        #             x2, y2, w2, h2 = tlwh_n
+        #             if i != n:
+        #                 if 0.3 < (w1*h1) / (w2*h2) < 3 and x2 < x1 + (w1/2) < x2+w2 and y2 < y1 + (h1/2) < y2+h2 and x1 < x2 + (w2/2) < x1+w1 and y1 < y2 + (h2/2) < y1+h1:
+        #                     output_stracks[i].track_id = int(str(hash(time.time()))[-2:] + str(output_stracks[i].track_id)[-2:])
+        #                     online_ids.append(output_stracks[i].track_id)
+        #                     continue
+        #         if len(online_ids) != i+1:
+        #             online_ids.append(output_stracks[i].track_id)
 
+
+        # get scores of lost tracks
         logger.debug('===========Frame {}=========='.format(self.frame_id))
         logger.debug('Activated: {}'.format([track.track_id for track in activated_starcks]))
         logger.debug('Refind: {}'.format([track.track_id for track in refind_stracks]))
         logger.debug('Lost: {}'.format([track.track_id for track in lost_stracks]))
         logger.debug('Removed: {}'.format([track.track_id for track in removed_stracks]))
         # print('Final {} s'.format(t5-t4))
-        return output_stracks
+        return online_ids, online_tlwhs
+
 
 def joint_stracks(tlista, tlistb):
     exists = {}
@@ -361,6 +386,7 @@ def joint_stracks(tlista, tlistb):
             res.append(t)
     return res
 
+
 def sub_stracks(tlista, tlistb):
     stracks = {}
     for t in tlista:
@@ -371,19 +397,18 @@ def sub_stracks(tlista, tlistb):
             del stracks[tid]
     return list(stracks.values())
 
+
 def remove_duplicate_stracks(stracksa, stracksb):
     pdist = matching.iou_distance(stracksa, stracksb)
-    pairs = np.where(pdist<0.15)
+    pairs = np.where(pdist < 0.15)
     dupa, dupb = list(), list()
-    for p,q in zip(*pairs):
+    for p, q in zip(*pairs):
         timep = stracksa[p].frame_id - stracksa[p].start_frame
         timeq = stracksb[q].frame_id - stracksb[q].start_frame
         if timep > timeq:
             dupb.append(q)
         else:
             dupa.append(p)
-    resa = [t for i,t in enumerate(stracksa) if not i in dupa]
-    resb = [t for i,t in enumerate(stracksb) if not i in dupb]
+    resa = [t for i, t in enumerate(stracksa) if not i in dupa]
+    resb = [t for i, t in enumerate(stracksb) if not i in dupb]
     return resa, resb
-            
-

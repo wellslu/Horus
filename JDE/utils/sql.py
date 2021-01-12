@@ -6,7 +6,7 @@ class SQL(object):
                   'port': 8080,
                   'user': 'admin',
                   'password': 'iflab',
-                  'db': 'test2',
+                  'db': 'dev1',
                   'charset': 'utf8mb4',
                   'cursorclass': pymysql.cursors.DictCursor}
         self.connection = pymysql.connect(**config)

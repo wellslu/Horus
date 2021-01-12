@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import os
 import pandas as pd
-from utils.utils import mkdir_if_missing
+from JDE.utils.utils import mkdir_if_missing
 
 
 def tlwhs_to_tlbrs(tlwhs):
@@ -47,12 +47,12 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, scores=None, frame_id=0, 
     # 先截下每個人在每一侦的照片&更新資料庫
     for i, tlwh in enumerate(tlwhs):
         x1, y1, w, h = tlwh
-        obj_id = int(obj_ids[i])
+        obj_id = obj_ids[i]
         mkdir_if_missing(cid_png + f'/{obj_id}')
         cv2.imwrite(os.path.join(cid_png + f'/{obj_id}', f'{frame_id}.png'),
                     im[int(y1 if y1 > 0 else 0): int(y1 + h if y1 + h > 0 else 0),
                     int(x1 if x1 > 0 else 0): int(x1 + w if x1 + w > 0 else 0)])
-        if len(cutomer_table) != 0 and len(cutomer_table[cutomer_table['cid'] == str(obj_id)]) != 0:
+        if len(cutomer_table) != 0 and len(cutomer_table[cutomer_table['cid'] == obj_id]) != 0:
             sql_code = f'''UPDATE customer 
                                         SET leave_time={frame_id}
                                         WHERE cid=\'{obj_id}\''''
@@ -64,24 +64,24 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, scores=None, frame_id=0, 
     for i, tlwh in enumerate(tlwhs):
         x1, y1, w, h = tlwh
         intbox = tuple(map(int, (x1, y1, x1 + w, y1 + h)))
-        obj_id = int(obj_ids[i])
-        id_text = '{}'.format(int(obj_id))
+        obj_id = obj_ids[i]
+        id_text = '{}'.format(obj_id)
         if len(cutomer_table) == 0:
             df = pd.DataFrame()
         else:
-            df = cutomer_table[cutomer_table['cid'] == str(obj_id)]
+            df = cutomer_table[cutomer_table['cid'] == obj_id]
         if len(df) != 0:
             mid = list(df['mid'])[0]
         else:
-            mid = np.nan
+            mid = None
         if len(df) != 0 and list(df['last_cid'])[0] is not None:
             id_text = list(df['last_cid'])[0]
         if ids2 is not None:
             id_text = id_text + ', {}'.format(int(ids2[i]))
         _line_thickness = 1 if obj_id <= 0 else line_thickness
-        color = get_color(abs(obj_id))
+        color = get_color(abs(int(str(obj_id)[-1])))
         cv2.rectangle(im, intbox[0:2], intbox[2:4], color=color, thickness=line_thickness)
-        if mid is not None:
+        if mid is None:
             cv2.putText(im, id_text, (intbox[0], intbox[1] + 30), cv2.FONT_HERSHEY_PLAIN,
                         text_scale, (0, 0, 255),thickness=text_thickness)
         else:

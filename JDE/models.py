@@ -3,13 +3,13 @@ from collections import defaultdict,OrderedDict
 
 import torch.nn as nn
 
-from utils.parse_config import *
-from utils.utils import *
+from JDE.utils.parse_config import *
+from JDE.utils.utils import *
 import time
 import math
 
 try:
-    from utils.syncbn import SyncBN
+    from JDE.utils.syncbn import SyncBN
     batch_norm=SyncBN #nn.BatchNorm2d
 except ImportError:
     batch_norm=nn.BatchNorm2d
