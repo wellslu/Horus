@@ -78,6 +78,7 @@ def drop_connect(x, drop_ratio):
     x.mul_(mask)
     return x
 
+
 class AnyHead(nn.Module):
     """AnyNet head."""
 
@@ -541,11 +542,11 @@ def init_pretrained_weights(key):
 @BACKBONE_REGISTRY.register()
 def build_regnet_backbone(cfg):
     # fmt: off
-    pretrain      = cfg.MODEL.BACKBONE.PRETRAIN
+    pretrain = cfg.MODEL.BACKBONE.PRETRAIN
     pretrain_path = cfg.MODEL.BACKBONE.PRETRAIN_PATH
-    last_stride   = cfg.MODEL.BACKBONE.LAST_STRIDE
-    bn_norm       = cfg.MODEL.BACKBONE.NORM
-    depth         = cfg.MODEL.BACKBONE.DEPTH
+    last_stride = cfg.MODEL.BACKBONE.LAST_STRIDE
+    bn_norm = cfg.MODEL.BACKBONE.NORM
+    depth = cfg.MODEL.BACKBONE.DEPTH
     # fmt: on
 
     cfg_files = {

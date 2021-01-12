@@ -234,11 +234,11 @@ def init_pretrained_weights(key):
 @BACKBONE_REGISTRY.register()
 def build_effnet_backbone(cfg):
     # fmt: off
-    pretrain      = cfg.MODEL.BACKBONE.PRETRAIN
+    pretrain = cfg.MODEL.BACKBONE.PRETRAIN
     pretrain_path = cfg.MODEL.BACKBONE.PRETRAIN_PATH
-    last_stride   = cfg.MODEL.BACKBONE.LAST_STRIDE
-    bn_norm       = cfg.MODEL.BACKBONE.NORM
-    depth         = cfg.MODEL.BACKBONE.DEPTH
+    last_stride = cfg.MODEL.BACKBONE.LAST_STRIDE
+    bn_norm = cfg.MODEL.BACKBONE.NORM
+    depth = cfg.MODEL.BACKBONE.DEPTH
     # fmt: on
 
     cfg_files = {

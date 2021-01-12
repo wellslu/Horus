@@ -109,10 +109,9 @@ _C.MODEL.LOSSES.FL.SCALE = 1.0
 _C.MODEL.WEIGHTS = ""
 
 # Values to be used for image normalization
-_C.MODEL.PIXEL_MEAN = [0.485*255, 0.456*255, 0.406*255]
+_C.MODEL.PIXEL_MEAN = [0.485 * 255, 0.456 * 255, 0.406 * 255]
 # Values to be used for image normalization
-_C.MODEL.PIXEL_STD = [0.229*255, 0.224*255, 0.225*255]
-
+_C.MODEL.PIXEL_STD = [0.229 * 255, 0.224 * 255, 0.225 * 255]
 
 # -----------------------------------------------------------------------------
 # INPUT
@@ -147,7 +146,7 @@ _C.INPUT.DO_AUGMIX = False
 _C.INPUT.REA = CN()
 _C.INPUT.REA.ENABLED = False
 _C.INPUT.REA.PROB = 0.5
-_C.INPUT.REA.MEAN = [0.596*255, 0.558*255, 0.497*255]  # [0.485*255, 0.456*255, 0.406*255]
+_C.INPUT.REA.MEAN = [0.596 * 255, 0.558 * 255, 0.497 * 255]  # [0.485*255, 0.456*255, 0.406*255]
 # Random Patch
 _C.INPUT.RPT = CN()
 _C.INPUT.RPT.ENABLED = False

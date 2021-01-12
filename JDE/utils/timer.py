@@ -10,6 +10,7 @@ import time
 
 class Timer(object):
     """A simple timer."""
+
     def __init__(self):
         self.total_time = 0.
         self.calls = 0
@@ -42,4 +43,3 @@ class Timer(object):
         self.diff = 0.
         self.average_time = 0.
         self.duration = 0.
-

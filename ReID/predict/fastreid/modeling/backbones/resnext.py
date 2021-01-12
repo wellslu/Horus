@@ -113,8 +113,10 @@ class ResNeXt(nn.Module):
         self.random_init()
 
         # fmt: off
-        if with_nl: self._build_nonlocal(layers, non_layers, bn_norm)
-        else:       self.NL_1_idx = self.NL_2_idx = self.NL_3_idx = self.NL_4_idx = []
+        if with_nl:
+            self._build_nonlocal(layers, non_layers, bn_norm)
+        else:
+            self.NL_1_idx = self.NL_2_idx = self.NL_3_idx = self.NL_4_idx = []
         # fmt: on
 
     def _make_layer(self, block, planes, blocks, stride=1, bn_norm='BN', with_ibn=False):
@@ -279,13 +281,13 @@ def build_resnext_backbone(cfg):
     """
 
     # fmt: off
-    pretrain      = cfg.MODEL.BACKBONE.PRETRAIN
+    pretrain = cfg.MODEL.BACKBONE.PRETRAIN
     pretrain_path = cfg.MODEL.BACKBONE.PRETRAIN_PATH
-    last_stride   = cfg.MODEL.BACKBONE.LAST_STRIDE
-    bn_norm       = cfg.MODEL.BACKBONE.NORM
-    with_ibn      = cfg.MODEL.BACKBONE.WITH_IBN
-    with_nl       = cfg.MODEL.BACKBONE.WITH_NL
-    depth         = cfg.MODEL.BACKBONE.DEPTH
+    last_stride = cfg.MODEL.BACKBONE.LAST_STRIDE
+    bn_norm = cfg.MODEL.BACKBONE.NORM
+    with_ibn = cfg.MODEL.BACKBONE.WITH_IBN
+    with_nl = cfg.MODEL.BACKBONE.WITH_NL
+    depth = cfg.MODEL.BACKBONE.DEPTH
     # fmt: on
 
     num_blocks_per_stage = {

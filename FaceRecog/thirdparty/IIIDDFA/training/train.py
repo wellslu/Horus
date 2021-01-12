@@ -1,1 +1,1 @@
-../train.py
+../ train.py

@@ -203,7 +203,7 @@ def get_colors(image, vertices):
 
 
 def write_obj_with_colors(obj_name, vertices, triangles, colors):
-    triangles = triangles.copy() # meshlab start with 1
+    triangles = triangles.copy()  # meshlab start with 1
 
     if obj_name.split('.')[-1] != 'obj':
         obj_name = obj_name + '.obj'
@@ -213,7 +213,7 @@ def write_obj_with_colors(obj_name, vertices, triangles, colors):
         # write vertices & colors
         for i in range(vertices.shape[1]):
             s = 'v {:.4f} {:.4f} {:.4f} {} {} {}\n'.format(vertices[1, i], vertices[0, i], vertices[2, i], colors[i, 2],
-                                               colors[i, 1], colors[i, 0])
+                                                           colors[i, 1], colors[i, 0])
             f.write(s)
 
         # write f: ver ind/ uv ind

@@ -83,10 +83,10 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, scores=None, frame_id=0, 
         cv2.rectangle(im, intbox[0:2], intbox[2:4], color=color, thickness=line_thickness)
         if mid is not None:
             cv2.putText(im, id_text, (intbox[0], intbox[1] + 30), cv2.FONT_HERSHEY_PLAIN,
-                        text_scale, (0, 0, 255),thickness=text_thickness)
+                        text_scale, (0, 0, 255), thickness=text_thickness)
         else:
             cv2.putText(im, f'cid : {id_text}   mid : {mid}', (intbox[0], intbox[1] + 30),
-                        cv2.FONT_HERSHEY_PLAIN, text_scale, (0, 0, 255),thickness=text_thickness)
+                        cv2.FONT_HERSHEY_PLAIN, text_scale, (0, 0, 255), thickness=text_thickness)
     return im
 
 

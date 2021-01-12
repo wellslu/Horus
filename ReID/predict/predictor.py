@@ -28,6 +28,7 @@ except RuntimeError:
 
 __all__ = ["FeatureExtractionDemo", "AsyncPredictor", "DefaultPredictor"]
 
+
 class FeatureExtractionDemo(object):
     def __init__(self, cfg, parallel=False):
         """
@@ -64,6 +65,7 @@ class FeatureExtractionDemo(object):
         image = torch.as_tensor(image.astype("float32").transpose(2, 0, 1))[None]
         predictions = self.predictor(image)
         return predictions
+
 
 class AsyncPredictor:
     """
@@ -155,6 +157,7 @@ class AsyncPredictor:
     @property
     def default_buffer_size(self):
         return len(self.procs) * 5
+
 
 class DefaultPredictor:
     """

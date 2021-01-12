@@ -74,12 +74,12 @@ class Baseline(nn.Module):
         must be the same as the outputs of the model forwarding.
         """
         # fmt: off
-        outputs           = outs["outputs"]
-        gt_labels         = outs["targets"]
+        outputs = outs["outputs"]
+        gt_labels = outs["targets"]
         # model predictions
         pred_class_logits = outputs['pred_class_logits'].detach()
-        cls_outputs       = outputs['cls_outputs']
-        pred_features     = outputs['features']
+        cls_outputs = outputs['cls_outputs']
+        pred_features = outputs['features']
         # fmt: on
 
         # Log prediction accuracy

@@ -34,11 +34,11 @@ import utils.datasets as datasets
 from track import eval_seq
 from utils.weight_gdown import get_jde_pt
 
-
 logger.setLevel(logging.INFO)
 
+
 def track(opt):
-    result_root = opt.output_root if opt.output_root!='' else '.'
+    result_root = opt.output_root if opt.output_root != '' else '.'
     mkdir_if_missing(result_root)
 
     cfg_dict = parse_model_cfg(opt.cfg)
@@ -53,9 +53,9 @@ def track(opt):
     dataloader = datasets.LoadVideo(opt.input_video, opt.img_size)
     result_filename = os.path.join(result_root, 'results.txt')
     cid_png = os.path.join(result_root, 'cid_png')
-    frame_rate = dataloader.frame_rate 
+    frame_rate = dataloader.frame_rate
 
-    frame_dir = None if opt.output_format=='text' else osp.join(result_root, 'frame')
+    frame_dir = None if opt.output_format == 'text' else osp.join(result_root, 'frame')
     # try:
     eval_seq(opt, dataloader, 'mot', result_filename, cid_png,
              save_dir=frame_dir, show_image=False, frame_rate=frame_rate)
@@ -64,9 +64,11 @@ def track(opt):
 
     if opt.output_format == 'video':
         output_video_path = osp.join(result_root, 'result.mp4')
-        cmd_str = 'ffmpeg -f image2 -i {}/%05d.png -c:v copy {}'.format(osp.join(result_root, 'frame'), output_video_path)
+        cmd_str = 'ffmpeg -f image2 -i {}/%05d.png -c:v copy {}'.format(osp.join(result_root, 'frame'),
+                                                                        output_video_path)
         os.system(cmd_str)
-        
+
+
 if __name__ == '__main__':
     get_jde_pt()
     parser = argparse.ArgumentParser(prog='demo.py')
@@ -78,10 +80,10 @@ if __name__ == '__main__':
     parser.add_argument('--min-box-area', type=float, default=200, help='filter out tiny boxes')
     parser.add_argument('--track-buffer', type=int, default=30, help='tracking buffer')
     parser.add_argument('--input-video', type=str, default='video_8.mp4', help='expected input root path')
-    parser.add_argument('--output-format', type=str, default='video', choices=['video', 'text'], help='Expected output format. Video or text.')
+    parser.add_argument('--output-format', type=str, default='video', choices=['video', 'text'],
+                        help='Expected output format. Video or text.')
     parser.add_argument('--output-root', type=str, default='results', help='expected output root path')
     opt = parser.parse_args()
     print(opt, end='\n\n')
 
     track(opt)
-

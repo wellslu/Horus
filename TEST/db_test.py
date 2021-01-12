@@ -68,6 +68,7 @@ def insert_data(conn: pymysql.connections.Connection):
         """
         cursor.execute(query)
 
+
 if __name__ == '__main__':
     conn = get_db_conn()
 

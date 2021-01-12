@@ -1,6 +1,7 @@
 import os
 import gdown
 
+
 def get_jde_pt():
     if not os.path.exists('weights'):
         os.mkdir('weights')

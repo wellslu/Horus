@@ -7,7 +7,9 @@
 """
 
 import sys
+
 sys.path.append("..")
+
 
 def test_import() -> bool:
     global curr_stage
@@ -31,16 +33,17 @@ def test_reid() -> bool:
 
     # step1: load model
     demo = ReidMatch(model_file="../ReID/pretrain_model",
-                     example_img="./test_img/reid_example.png", # image to warm up model.
+                     example_img="./test_img/reid_example.png",  # image to warm up model.
                      parallel=False)
     curr_stage += 1
     msg = f"[INFO] ({curr_stage}/{STAGE}) - successfully load reid model"
     print(msg)
 
     # step2: load model
-    result = demo.match_two_folder('../ReID/data/1', '../ReID/data/2', output_folder="../ReID/demo(test)", 
-                                    result_output="../ReID/demo(test)/test.json", result_table_output="../ReID/demo(test)/test.csv", 
-                                    sim_threshold=0.8, sup_threshold=0.9, sample_nums=5, sample_in_bin=3)
+    result = demo.match_two_folder('../ReID/data/1', '../ReID/data/2', output_folder="../ReID/demo(test)",
+                                   result_output="../ReID/demo(test)/test.json",
+                                   result_table_output="../ReID/demo(test)/test.csv",
+                                   sim_threshold=0.8, sup_threshold=0.9, sample_nums=5, sample_in_bin=3)
 
     curr_stage += 1
     msg = f"[INFO] ({curr_stage}/{STAGE}) - successfully run function - match_two_folder"

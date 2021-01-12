@@ -35,7 +35,6 @@ def get_member_fg(member_name: str, member_img_dir):
             print(f"{member_name} - save count: {save_cnt}")
 
 
-
 save_dir = 'fg'
 create_dir(save_dir)
 project_dir = pathlib.Path(__file__).parent.parent  # horus

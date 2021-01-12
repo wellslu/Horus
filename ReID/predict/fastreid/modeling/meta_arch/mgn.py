@@ -27,8 +27,8 @@ class MGN(nn.Module):
 
         # fmt: off
         # backbone
-        bn_norm    = cfg.MODEL.BACKBONE.NORM
-        with_se    = cfg.MODEL.BACKBONE.WITH_SE
+        bn_norm = cfg.MODEL.BACKBONE.NORM
+        with_se = cfg.MODEL.BACKBONE.WITH_SE
         # fmt :on
 
         backbone = build_backbone(cfg)
@@ -152,33 +152,33 @@ class MGN(nn.Module):
 
     def losses(self, outs):
         # fmt: off
-        b1_outputs        = outs["b1_outputs"]
-        b2_outputs        = outs["b2_outputs"]
-        b21_outputs       = outs["b21_outputs"]
-        b22_outputs       = outs["b22_outputs"]
-        b3_outputs        = outs["b3_outputs"]
-        b31_outputs       = outs["b31_outputs"]
-        b32_outputs       = outs["b32_outputs"]
-        b33_outputs       = outs["b33_outputs"]
-        gt_labels         = outs["targets"]
+        b1_outputs = outs["b1_outputs"]
+        b2_outputs = outs["b2_outputs"]
+        b21_outputs = outs["b21_outputs"]
+        b22_outputs = outs["b22_outputs"]
+        b3_outputs = outs["b3_outputs"]
+        b31_outputs = outs["b31_outputs"]
+        b32_outputs = outs["b32_outputs"]
+        b33_outputs = outs["b33_outputs"]
+        gt_labels = outs["targets"]
         # model predictions
         pred_class_logits = b1_outputs['pred_class_logits'].detach()
-        b1_logits         = b1_outputs['cls_outputs']
-        b2_logits         = b2_outputs['cls_outputs']
-        b21_logits        = b21_outputs['cls_outputs']
-        b22_logits        = b22_outputs['cls_outputs']
-        b3_logits         = b3_outputs['cls_outputs']
-        b31_logits        = b31_outputs['cls_outputs']
-        b32_logits        = b32_outputs['cls_outputs']
-        b33_logits        = b33_outputs['cls_outputs']
-        b1_pool_feat      = b1_outputs['features']
-        b2_pool_feat      = b2_outputs['features']
-        b3_pool_feat      = b3_outputs['features']
-        b21_pool_feat     = b21_outputs['features']
-        b22_pool_feat     = b22_outputs['features']
-        b31_pool_feat     = b31_outputs['features']
-        b32_pool_feat     = b32_outputs['features']
-        b33_pool_feat     = b33_outputs['features']
+        b1_logits = b1_outputs['cls_outputs']
+        b2_logits = b2_outputs['cls_outputs']
+        b21_logits = b21_outputs['cls_outputs']
+        b22_logits = b22_outputs['cls_outputs']
+        b3_logits = b3_outputs['cls_outputs']
+        b31_logits = b31_outputs['cls_outputs']
+        b32_logits = b32_outputs['cls_outputs']
+        b33_logits = b33_outputs['cls_outputs']
+        b1_pool_feat = b1_outputs['features']
+        b2_pool_feat = b2_outputs['features']
+        b3_pool_feat = b3_outputs['features']
+        b21_pool_feat = b21_outputs['features']
+        b22_pool_feat = b22_outputs['features']
+        b31_pool_feat = b31_outputs['features']
+        b32_pool_feat = b32_outputs['features']
+        b33_pool_feat = b33_outputs['features']
         # fmt: on
 
         # Log prediction accuracy

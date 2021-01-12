@@ -491,11 +491,11 @@ def build_osnet_backbone(cfg):
     """
 
     # fmt: off
-    pretrain      = cfg.MODEL.BACKBONE.PRETRAIN
+    pretrain = cfg.MODEL.BACKBONE.PRETRAIN
     pretrain_path = cfg.MODEL.BACKBONE.PRETRAIN_PATH
-    with_ibn      = cfg.MODEL.BACKBONE.WITH_IBN
-    bn_norm       = cfg.MODEL.BACKBONE.NORM
-    depth         = cfg.MODEL.BACKBONE.DEPTH
+    with_ibn = cfg.MODEL.BACKBONE.WITH_IBN
+    bn_norm = cfg.MODEL.BACKBONE.NORM
+    depth = cfg.MODEL.BACKBONE.DEPTH
     # fmt: on
 
     num_blocks_per_stage = [2, 2, 2]

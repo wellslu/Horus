@@ -125,8 +125,9 @@ class SmoothAP(object):
         group = N // self.num_id
         for ind in range(self.num_id):
             pos_divide = torch.sum(
-                sim_pos_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)] / (sim_all_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)]))
-            ap += pos_divide / torch.sum(pos_mask[ind*group]) / N
+                sim_pos_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)] / (
+                sim_all_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)]))
+            ap += pos_divide / torch.sum(pos_mask[ind * group]) / N
         return 1 - ap
 
 
@@ -176,7 +177,7 @@ class SmoothAP_old(torch.nn.Module):
         """
         super().__init__()
 
-        assert(batch_size%num_id==0)
+        assert (batch_size % num_id == 0)
 
         self.anneal = anneal
         self.batch_size = batch_size
@@ -205,7 +206,8 @@ class SmoothAP_old(torch.nn.Module):
         # compute the mask which only gives non-zero weights to the positive set
         xs = preds.view(self.num_id, int(self.batch_size / self.num_id), self.feat_dims)
         pos_mask = 1.0 - torch.eye(int(self.batch_size / self.num_id))
-        pos_mask = pos_mask.unsqueeze(dim=0).unsqueeze(dim=0).repeat(self.num_id, int(self.batch_size / self.num_id), 1, 1)
+        pos_mask = pos_mask.unsqueeze(dim=0).unsqueeze(dim=0).repeat(self.num_id, int(self.batch_size / self.num_id), 1,
+                                                                     1)
         # compute the relevance scores
         sim_pos = torch.bmm(xs, xs.permute(0, 2, 1))
         sim_pos_repeat = sim_pos.unsqueeze(dim=2).repeat(1, 1, int(self.batch_size / self.num_id), 1)
@@ -220,10 +222,12 @@ class SmoothAP_old(torch.nn.Module):
         ap = torch.zeros(1)
         group = int(self.batch_size / self.num_id)
         for ind in range(self.num_id):
-            pos_divide = torch.sum(sim_pos_rk[ind] / (sim_all_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)]))
+            pos_divide = torch.sum(
+                sim_pos_rk[ind] / (sim_all_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)]))
             ap = ap + ((pos_divide / group) / self.batch_size)
 
-        return 1-ap
+        return 1 - ap
+
 
 if __name__ == '__main__':
     loss1 = SmoothAP(0.01)
@@ -232,7 +236,7 @@ if __name__ == '__main__':
     inputs = torch.randn(60, 256, requires_grad=True)
     targets = []
     for i in range(6):
-        targets.extend([i]*10)
+        targets.extend([i] * 10)
     targets = torch.LongTensor(targets)
 
     output1 = loss1(inputs, targets)

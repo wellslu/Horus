@@ -16,7 +16,7 @@ def circle_loss(
         embedding: torch.Tensor,
         targets: torch.Tensor,
         margin: float,
-        alpha: float,) -> torch.Tensor:
+        alpha: float, ) -> torch.Tensor:
     embedding = nn.functional.normalize(embedding, dim=1)
 
     if comm.get_world_size() > 1:

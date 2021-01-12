@@ -1,5 +1,6 @@
 import pymysql.cursors
 
+
 class SQL(object):
     def __init__(self):
         config = {'host': '163.14.137.58',
@@ -22,8 +23,6 @@ class SQL(object):
     def write_cutomer_table(self, sql_code):
         self.cursor.execute(sql_code)
         self.connection.commit()
-
-
 
     def close_sql(self):
         self.cursor.close()
