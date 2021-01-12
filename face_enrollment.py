@@ -32,13 +32,13 @@ def enroll_with_pkl(pkl_path: str):
 
     conn.commit()
     conn.close()
-    print(f"new member - {new_mid} was added.")
+    print(f"new member: {new_mid} was added.")
 
 
 
 if __name__ == '__main__':
-    pickle_path = 'mf_data/jet.pkl'
-    # pickle_path = 'mf_data/lotus.pkl'
+    # pickle_path = 'mf_data/jet.pkl'
+    pickle_path = 'mf_data/lotus.pkl'
 
     TABLE_NAME = 'member'
 
