@@ -6,8 +6,8 @@ Create Date: 2021/1/13
 # coding: utf-8
 from pandas import DataFrame
 
-from General.db_tool.basic import get_db_conn, get_table_df_with_conn, insert_data_with_conn
-from General.ult import gen_member_id
+from FaceRecog.horus_toolkit import gen_member_id
+from FaceRecog.horus_toolkit.db_tool import get_db_conn, get_table_df_with_conn, insert_data_with_conn
 
 
 def gen_new_mid(table_df: DataFrame) -> str:
@@ -33,7 +33,6 @@ def enroll_with_pkl(pkl_path: str):
     conn.commit()
     conn.close()
     print(f"new member: {new_mid} was added.")
-
 
 
 if __name__ == '__main__':
