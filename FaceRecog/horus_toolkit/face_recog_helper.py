@@ -8,6 +8,7 @@ from pymysql.connections import Connection
 from numpy import ndarray
 from pandas import DataFrame
 from ..Facer import FaceCapturer, LMKScanner, AGFaceRecog
+# from ..Facer.ult
 
 
 class FaceRecogHelper:
