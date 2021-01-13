@@ -4,7 +4,9 @@ from threading import Thread
 
 from FaceRecog.horus_fr_api import get_mf_data, do_face_recog
 from FaceRecog.horus_toolkit.db_tool import get_db_conn
-from FaceRecog.Facer.shortcut import get_face_capturer, get_lmk_scanner
+from FaceRecog.horus_toolkit import FaceRecogHelper
+from FaceRecog.horus_toolkit import get_face_recog_helper
+from FaceRecog.Facer.shortcut import get_face_capturer, get_lmk_scanner, get_ag_face_recog
 from FaceRecog.horus_toolkit import UpdateTimer
 from FaceRecog.horus_toolkit import sec_to_hms
 
@@ -34,8 +36,18 @@ def face_recog_launch():
     fr_db_conn = get_db_conn()
     face_capturer = get_face_capturer()
     lmk_scanner = get_lmk_scanner()
-    ag_face_recog = ''
+    ag_face_recog = get_ag_face_recog()
     mf_data = get_mf_data(fr_db_conn, member_table_name)
+    fr_helper = get_face_recog_helper(face_capturer,
+                                      lmk_scanner,
+                                      ag_face_recog,
+                                      mf_data,
+                                      fr_db_conn,
+                                      member_table_name,
+                                      customer_table_name)
+
+    # face recog work
+
 
     last_fr_uidx = fr_uidx
     u_timer = UpdateTimer()
@@ -49,7 +61,7 @@ def face_recog_launch():
             print(f"prepare to work, nud: {sec_to_hms(u_timer.no_update_duration())} \n")
 
             # to do work
-            do_face_recog(face_capturer, lmk_scanner, mf_data,
+            do_face_recog(face_capturer, lmk_scanner, ag_face_recog, mf_data,
                           fr_db_conn, member_table_name, customer_table_name)
 
             last_fr_uidx = fr_uidx
