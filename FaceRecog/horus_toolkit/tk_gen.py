@@ -23,9 +23,9 @@ def gen_random_token(rt_len: int, char_type='DL') -> str:
     :param char_type: str
     :return:
     """
-    if char_type is 'DL':
+    if char_type == 'DL':
         char_pool = DIGIT_LOWER
-    elif char_type is 'DU':
+    elif char_type == 'DU':
         char_pool = DIGIT_UPPER
     else:
         char_pool = DIGIT_ALL

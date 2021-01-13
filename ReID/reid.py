@@ -229,7 +229,7 @@ class ReidMatch(FeatureExtractionDemo):
 
     def cosine_similarity(self, a, b):
         assert (len(a.shape) == 1) & (len(b.shape) == 1) & (
-                    len(a) == len(b)), "The input vector must be one dimension & same length"
+                len(a) == len(b)), "The input vector must be one dimension & same length"
         cos_sim = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
         return cos_sim

@@ -126,7 +126,7 @@ class SmoothAP(object):
         for ind in range(self.num_id):
             pos_divide = torch.sum(
                 sim_pos_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)] / (
-                sim_all_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)]))
+                    sim_all_rk[(ind * group):((ind + 1) * group), (ind * group):((ind + 1) * group)]))
             ap += pos_divide / torch.sum(pos_mask[ind * group]) / N
         return 1 - ap
 

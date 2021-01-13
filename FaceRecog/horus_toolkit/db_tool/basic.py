@@ -14,20 +14,30 @@ from pymysql.connections import Connection
 from . import cfg
 
 
-def get_db_conn() -> Connection:
-    host = cfg.HOST
-    port = cfg.PORT
-    user = cfg.USER
-    password = cfg.PASSWORD
-    db = cfg.DB
+def get_db_conn(host=None, port=None, user_name=None, password=None, db_name=None) -> Connection:
+    if host is None:
+        host = cfg.HOST
+
+    if port is None:
+        port = cfg.PORT
+
+    if user_name is None:
+        user_name = cfg.USER
+
+    if password is None:
+        password = cfg.PASSWORD
+
+    if db_name is None:
+        db_name = cfg.DB
+
     try:
         conn = pymysql.connect(host=host, port=port,
-                               user=user, passwd=password,
-                               database=db, charset='utf8mb4',
+                               user=user_name, passwd=password,
+                               database=db_name, charset='utf8mb4',
                                cursorclass=pymysql.cursors.DictCursor)
         return conn
     except Exception as e:
-        print(f'[WARN] - Failed to connect database: {host}:{port} -> {db}  USER: {user}')
+        print(f'[WARN] - Failed to connect database: {host}:{port} -> {db_name}  USER: {user_name}')
         print(f'error: {e}')
 
 
@@ -77,7 +87,7 @@ def insert_data_with_conn(conn: Connection, table_name: str, data: Union[dict], 
 
     # query of table-mapping
     query = ''
-    if table_name is 'member':
+    if table_name == 'member':
         mid = data.get('mid')
         face_img = data.get('face_img')
         query = f"""
