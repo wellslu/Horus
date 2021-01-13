@@ -13,7 +13,7 @@ from .horus_toolkit.db_tool import get_table_df_with_conn
 from FaceRecog.Facer import FaceCapturer, LMKScanner
 from pymysql.connections import Connection
 from imutils.paths import list_images
-from .Facer.shortcut import get_face_grid_from_portrait
+from .Facer.shortcut import get_face_grid_from_portrait, get_face_encoding
 
 IMG_COUNT_THRESH = 1
 
@@ -47,7 +47,7 @@ def do_face_pipeline(img_path: str, face_capturer: FaceCapturer, lmk_scanner: LM
     if face_grid is None:
         return
 
-    face_encode = ''
+    face_encoding = get_face_encoding(img_path)
 
 
 # >>>>>> do face recog >>>>>>

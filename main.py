@@ -34,6 +34,7 @@ def face_recog_launch():
     fr_db_conn = get_db_conn()
     face_capturer = get_face_capturer()
     lmk_scanner = get_lmk_scanner()
+    ag_face_recog = ''
     mf_data = get_mf_data(fr_db_conn, member_table_name)
 
     last_fr_uidx = fr_uidx
