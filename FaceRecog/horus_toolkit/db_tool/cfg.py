@@ -8,4 +8,4 @@ HOST = '163.14.137.58'
 PORT = 8080
 USER = 'admin'
 PASSWORD = 'iflab'
-DB = 'test2'
+DB = 'dev1'

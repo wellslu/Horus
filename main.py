@@ -2,7 +2,7 @@
 import time
 from threading import Thread
 
-from FaceRecog.horus_fr_api import get_mf_data
+from FaceRecog.horus_fr_api import get_mf_data, do_face_recog
 from FaceRecog.horus_toolkit.db_tool import get_db_conn
 from FaceRecog.Facer.shortcut import get_face_capturer, get_lmk_scanner
 from FaceRecog.horus_toolkit import UpdateTimer
@@ -18,6 +18,8 @@ fr_uidx = 0
 
 
 # >>>>>> face recognition module >>>>>>
+
+
 def face_recog_launch():
     msg = '[INFO] - face recog thread start.'
     print(msg)
@@ -32,18 +34,26 @@ def face_recog_launch():
     fr_db_conn = get_db_conn()
     face_capturer = get_face_capturer()
     lmk_scanner = get_lmk_scanner()
+    mf_data = get_mf_data(fr_db_conn, member_table_name)
 
     last_fr_uidx = fr_uidx
     u_timer = UpdateTimer()
 
     work_flag = True
     while work_flag:
+        # print(f"fr_uidx from mot : {fr_uidx}  last_fr_uidx : {last_fr_uidx} \n")
+
         # check update status
         if fr_uidx != last_fr_uidx:
-            print('work')
-            work_flag = False
+            print(f"prepare to work, nud: {sec_to_hms(u_timer.no_update_duration())} \n")
+
+            # to do work
+            do_face_recog(face_capturer, lmk_scanner, mf_data,
+                          fr_db_conn, member_table_name, customer_table_name)
+
             last_fr_uidx = fr_uidx
             u_timer.reset()
+            # work_flag = False # ***
 
         else:
             # print('wait for update...')
@@ -53,12 +63,8 @@ def face_recog_launch():
         if u_timer.no_update_duration() > listen_duration:
             work_flag = False
             duration_str = sec_to_hms(u_timer.no_update_duration())
-            msg = f"[VITAL] - The database has not updated for {duration_str}, prepare to close job"
+            msg = f"[VITAL] - The database has not updated for {duration_str}, prepare to close job. \n"
             print(msg)
-
-        print(sec_to_hms(u_timer.no_update_duration()), fr_uidx)
-
-
 
 
 # <<<<<< face recognition module <<<<<<
@@ -67,7 +73,7 @@ def face_recog_launch():
 def mot_pretend():
     global fr_uidx
 
-    msg = '[INFO] - mot thread start.'
+    msg = '[INFO] - mot thread start.\n'
     print(msg)
 
     sleep_interval = 5
@@ -76,9 +82,11 @@ def mot_pretend():
     while flag:
         time.sleep(sleep_interval)
         fr_uidx += 1
-        # flag = False
+        # print(f"fr_uidx from mot : {fr_uidx} \n")
 
-    msg = '[INFO] - mot thread finished.'
+        # flag = False # ***
+
+    msg = '[INFO] - mot thread finished. \n'
     print(msg)
 
 

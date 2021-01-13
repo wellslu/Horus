@@ -36,9 +36,10 @@ def enroll_with_pkl(pkl_path: str):
 
 
 if __name__ == '__main__':
-    # pickle_path = 'mf_data/jet.pkl'
-    pickle_path = 'mf_data/lotus.pkl'
-
     TABLE_NAME = 'member'
 
+    pickle_path = 'mf_data/jet.pkl'
+    enroll_with_pkl(pickle_path)
+
+    pickle_path = 'mf_data/lotus.pkl'
     enroll_with_pkl(pickle_path)
