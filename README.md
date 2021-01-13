@@ -4,7 +4,7 @@ A Human Tracking System
 <br>
 
 # Download the src code of Horus
-#### Horus contains a submodule - [Facer](https://github.com/jet-chien/Facer). For downloading the whole, please use these command:
+#### Horus contains a submodule - [Facer](https://github.com/jet-chien/Facer). For downloading the whole source code, please use these command:
 ```shell script
 git clone --recurse-submodules https://github.com/jet-chien/Horus.git
 ```
