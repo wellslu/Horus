@@ -21,8 +21,6 @@ def get_mf_data(conn: Connection, table_name='member', db_name=None) -> dict:
         face_img_path = row['face_img']
         face_img_type = ntpath.abspath(face_img_path).split('.')[-1]
 
-        print(face_img_path, os.path.exists(face_img_path))
-
         face_data = None
         if face_img_type == 'pkl':
             face_data = load_pkl(face_img_path)
