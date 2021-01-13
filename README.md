@@ -3,6 +3,20 @@ A Human Tracking System
 <hr>
 <br>
 
+# Download the src code of Horus
+> Horus contained submodule - [Facer](https://github.com/jet-chien/Facer). For downloading the whole, please use these command:
+```shell script
+git clone --recurse-submodules https://github.com/jet-chien/Horus.git
+```
+#### or
+```shell script
+git clone --recurse-submodules git@github.com:jet-chien/Facer.git
+``` 
+
+
+<br>
+
+
 # Dev Environment
 ### Database
 > MySQL 8.0
