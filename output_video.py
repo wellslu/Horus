@@ -1,0 +1,62 @@
+"""
+author: Jet Chien
+GitHub: https://github.com/jet-chien
+Create Date: 2021/1/14
+"""
+# coding: utf-8
+import ntpath
+from typing import Union
+import cv2
+from tqdm import tqdm
+from imutils.paths import list_images
+
+
+class VideoTool:
+    CLIP_FILE_INDENT = 3
+    CLIP_DURATION = 60
+    OUTPUT_DEFAULT_FPS = 24
+
+    @staticmethod
+    def get_video_name(f: str) -> (str, str):
+        f_data = ntpath.basename(f).split('.')
+        return f_data[0], f_data[-1]
+
+    @staticmethod
+    def get_fourcc(fn: str) -> int:
+        _, ext = VideoTool.get_video_name(fn)
+        if ext == 'mp4':
+            return cv2.VideoWriter_fourcc(*'mp4v')
+
+        elif ext == 'avi':
+            return cv2.VideoWriter_fourcc(*'XVID')
+
+        else:
+            return cv2.VideoWriter_fourcc(*'mp4v')
+
+    @staticmethod
+    def images_to_video(img_list: Union[str, list], output_path: str, fps=OUTPUT_DEFAULT_FPS):
+        if isinstance(img_list, str):
+            img_list = list(list_images(img_list))
+
+        fourcc = VideoTool.get_fourcc(output_path)
+        height, width, _ = img_list[0].shape
+        size = (width, height)
+        out = cv2.VideoWriter(output_path, fourcc, fps, size)
+
+        for frame in tqdm(img_list):
+            out.write(frame)
+
+        out.release()
+
+    @staticmethod
+    def get_video_meta(video_file: str) -> dict:
+        result = dict()
+        v = cv2.VideoCapture(video_file)
+        width = int(v.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(v.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        fps = v.get(cv2.CAP_PROP_FPS)
+        result['width'] = width
+        result['height'] = height
+        result['fps'] = fps
+
+        return result
