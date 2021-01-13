@@ -42,7 +42,7 @@ def get_mf_data(conn: Connection, table_name='member', db_name=None) -> dict:
     return mf_data
 
 
-def do_face_pipeline(img_path:str, face_capturer: FaceCapturer, lmk_scanner: LMKScanner):
+def do_face_pipeline(img_path: str, face_capturer: FaceCapturer, lmk_scanner: LMKScanner):
     face_grid = get_face_grid_from_portrait(img_path, face_capturer, lmk_scanner)
     if face_grid is None:
         return
