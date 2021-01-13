@@ -5,10 +5,11 @@ Create Date: 2021/1/13
 """
 # coding: utf-8
 from pprint import pformat
+from typing import Union, Any
 
 
 class RecogResult:
-    def __init__(self, status: bool, has_member: bool, hl_member: str, member_cand: list,
+    def __init__(self, status: bool, has_member: bool, hl_member: Union[str, Any], member_cand: list,
                  tag=None, error_code=None, error_msg=None, event_flag=None, exe=None):
         self.status = status
         self.has_member = has_member

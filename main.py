@@ -59,13 +59,11 @@ def face_recog_launch():
             print(f"prepare to work, nud: {sec_to_hms(u_timer.no_update_duration())} \n")
 
             # to do work
-            # do_face_recog(face_capturer, lmk_scanner, ag_face_recog, mf_data,
-            #               fr_db_conn, member_table_name, customer_table_name)
-            # fr_helper.recognize()
+            fr_helper.recognize()
 
             last_fr_uidx = fr_uidx
             u_timer.reset()
-            # work_flag = False  # ***
+            work_flag = False  # for testing
 
         else:
             # print('wait for update...')
@@ -77,6 +75,9 @@ def face_recog_launch():
             duration_str = sec_to_hms(u_timer.no_update_duration())
             msg = f"[VITAL] - The database has not updated for {duration_str}, prepare to close job. \n"
             print(msg)
+
+    msg = f"[VITAL] - face recog thread finish."
+    print(msg)
 
 
 # <<<<<< face recognition module <<<<<<
