@@ -73,13 +73,14 @@ def do_face_recog(face_capturer: FaceCapturer, lmk_scanner: LMKScanner, ag_face_
                   fr_db_conn: Connection, member_table_name: str, customer_table_name: str):
     customer_df = get_table_df_with_conn(fr_db_conn, customer_table_name)
     print(customer_df)
+    print(len(customer_df))
 
-    for i, row in customer_df.iterrows():
-        img_dir = row['customer_img']
-        img_ls = list(list_images(img_dir))
-
-        if len(img_ls) >= IMG_COUNT_THRESH:
-            _face_recog_worker(face_capturer, lmk_scanner, ag_face_recog, mf_data, img_ls)
+    # for i, row in customer_df.iterrows():
+    #     img_dir = row['customer_img']
+    #     img_ls = list(list_images(img_dir))
+    #
+    #     if len(img_ls) >= IMG_COUNT_THRESH:
+    #         _face_recog_worker(face_capturer, lmk_scanner, ag_face_recog, mf_data, img_ls)
 
 
 def _face_recog_worker(face_capturer: FaceCapturer, lmk_scanner: LMKScanner, ag_face_recog: AGFaceRecog,

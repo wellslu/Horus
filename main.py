@@ -29,7 +29,7 @@ def face_recog_launch():
     # const var
     member_table_name = 'member'
     customer_table_name = 'customer'
-    listen_duration = 0.5  # minutes
+    listen_duration = 0.25  # minutes
     listen_duration *= listen_duration * 60
 
     # pre-work (about 4 sec)
@@ -47,8 +47,6 @@ def face_recog_launch():
                                       customer_table_name)
 
     # face recog work
-
-
     last_fr_uidx = fr_uidx
     u_timer = UpdateTimer()
 
@@ -61,12 +59,13 @@ def face_recog_launch():
             print(f"prepare to work, nud: {sec_to_hms(u_timer.no_update_duration())} \n")
 
             # to do work
-            do_face_recog(face_capturer, lmk_scanner, ag_face_recog, mf_data,
-                          fr_db_conn, member_table_name, customer_table_name)
+            # do_face_recog(face_capturer, lmk_scanner, ag_face_recog, mf_data,
+            #               fr_db_conn, member_table_name, customer_table_name)
+            # fr_helper.recognize()
 
             last_fr_uidx = fr_uidx
             u_timer.reset()
-            # work_flag = False # ***
+            # work_flag = False  # ***
 
         else:
             # print('wait for update...')
