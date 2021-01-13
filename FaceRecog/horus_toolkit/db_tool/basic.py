@@ -81,6 +81,11 @@ def get_table_df_with_conn(conn: Connection, table_name: str, db_name=None) -> D
     return pd.read_sql_query(query, conn)
 
 
+def exe_query(conn: Connection, query: str):
+    with conn.cursor() as cursor:
+        cursor.execute(query)
+
+
 def insert_data_with_conn(conn: Connection, table_name: str, data: Union[dict], db_name=None):
     if db_name is None:
         db_name = cfg.DB
@@ -97,5 +102,58 @@ def insert_data_with_conn(conn: Connection, table_name: str, data: Union[dict], 
             ('{mid}', '{face_img}')
         """
 
-    with conn.cursor() as cursor:
-        cursor.execute(query)
+    exe_query(conn, query)
+
+
+def update_data_with_conn(conn: Connection, table_name: str, new_data: dict, where: dict):
+    """
+    - new_data :
+    {
+        'col_you_to_update' : 'val_to_update'
+    }
+
+    - target :
+    {
+        'condition_col' : 'condition_val'
+    }
+
+    * example:
+        If you want to update a table which named "student"
+        and change "name" to "Jet"
+        on the row with "id" "21"
+
+        you should input the arguments like this way:
+            update_data_with_conn(
+                conn,
+                'student',
+                {'name' : 'Jet'},
+                {'id' : 21}
+            )
+
+    :param conn:
+    :param table_name:
+    :param new_data:
+    :param where:
+    :return:
+    """
+    new_data = list(new_data.items())
+    where = list(where.items())
+
+    prefix = f"""UPDATE {table_name} SET"""
+
+    infix = ''
+    while new_data:
+        d = new_data.pop(0)
+        infix += f" `{d[0]}` = '{d[1]}'"
+        if len(new_data):
+            infix += ','
+        else:
+            infix += ' '
+
+    suffix = f"""WHERE `{where[0][0]}` = {where[0][1]}"""
+
+    # example : UPDATE customer SET `mid` = 'M-h7ed' WHERE `id` = 1
+    query = prefix + infix + suffix  # it might not be the best way, cause the datatype of db-table
+    # print(query)
+
+    exe_query(conn, query)

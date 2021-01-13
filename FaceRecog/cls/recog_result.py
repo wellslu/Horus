@@ -28,7 +28,7 @@ class RecogResult:
             s = f"     Status : {self.status}\n" \
                 f" Has Member : {self.has_member}\n" \
                 f"  HL Member : {self.ml_member}\n" \
-                f"Member Cand : \n{pformat(self.member_cand, indent=4)}\n"
+                f"Member Cand : \n\t{pformat(self.member_cand, indent=4)}\n"
         else:
             s = f"    Status : {self.status}\n" \
                 f"Error Code : {self.error_code}\n" \

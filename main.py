@@ -19,18 +19,22 @@ fr_uidx = 0
 # <<<<<< listened variables <<<<<<
 
 
+# >>>>>> re-id module >>>>>>
+# TODO re-id entry-point
+# <<<<<< re-id module <<<<<<
+
+
 # >>>>>> face recognition module >>>>>>
-
-
-def face_recog_launch():
+def launch_face_recog():
     msg = '[INFO] - face recog thread start.'
     print(msg)
 
     # const var
     member_table_name = 'member'
     customer_table_name = 'customer'
-    listen_duration = 0.25  # minutes
-    listen_duration *= listen_duration * 60
+    listen_duration = 0.5  # minutes
+    listen_duration *= 60
+    print(listen_duration)
 
     # pre-work (about 4 sec)
     fr_db_conn = get_db_conn()
@@ -52,18 +56,16 @@ def face_recog_launch():
 
     work_flag = True
     while work_flag:
-        # print(f"fr_uidx from mot : {fr_uidx}  last_fr_uidx : {last_fr_uidx} \n")
-
         # check update status
         if fr_uidx != last_fr_uidx:
             print(f"prepare to work, nud: {sec_to_hms(u_timer.no_update_duration())} \n")
 
-            # to do work
+            # do face recognition
             fr_helper.recognize()
 
             last_fr_uidx = fr_uidx
             u_timer.reset()
-            work_flag = False  # for testing
+            # work_flag = False  # only do 1 time
 
         else:
             # print('wait for update...')
@@ -82,8 +84,14 @@ def face_recog_launch():
 
 # <<<<<< face recognition module <<<<<<
 
+
 # >>>>>> mot module >>>>>>
-def mot_pretend():
+# TODO mot entry-point
+# <<<<<< mot module <<<<<<
+
+
+# >>>>>> fake mot module >>>>>>
+def fake_mot():
     global fr_uidx
 
     msg = '[INFO] - mot thread start.\n'
@@ -95,20 +103,18 @@ def mot_pretend():
     while flag:
         time.sleep(sleep_interval)
         fr_uidx += 1
-        # print(f"fr_uidx from mot : {fr_uidx} \n")
-
-        # flag = False # ***
+        flag = False  # ***
 
     msg = '[INFO] - mot thread finished. \n'
     print(msg)
 
 
-# <<<<<< mot module <<<<<<
+# <<<<<< fake mot module <<<<<<
 
 
 if __name__ == '__main__':
-    mot_thread = Thread(target=mot_pretend)
+    mot_thread = Thread(target=fake_mot)
     mot_thread.start()
 
-    face_recog_thread = Thread(target=face_recog_launch)
+    face_recog_thread = Thread(target=launch_face_recog())
     face_recog_thread.start()
