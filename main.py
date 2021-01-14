@@ -2,6 +2,8 @@
 import time
 from threading import Thread
 import argparse
+import pandas as pd
+from pandas import DataFrame
 
 # JDE
 from JDE.jde_start import jde_launch
@@ -14,8 +16,10 @@ from FaceRecog.horus_toolkit import get_face_recog_helper
 from FaceRecog.horus_toolkit import sec_to_hms
 from FaceRecog.horus_toolkit.db_tool import get_db_conn
 
+
 # >>>>>> listened variables >>>>>>
-customer_df = None
+def get_latest_cus_df(cus_df_path='customer.pkl') -> DataFrame:
+    return pd.read_pickle(cus_df_path)
 
 
 # <<<<<< listened variables <<<<<<
@@ -34,7 +38,7 @@ def launch_face_recog():
     # const var
     member_table_name = 'member'
     customer_table_name = 'customer'
-    listen_duration = 0.5  # minutes
+    listen_duration = 5  # minutes
     listen_duration *= 60
 
     # pre-work (about 4 sec)
@@ -52,17 +56,18 @@ def launch_face_recog():
                                       customer_table_name)
 
     # face recog work
-    last_df = customer_df
+    last_df = get_latest_cus_df()
     u_timer = UpdateTimer()
 
     work_flag = True
     while work_flag:
         # check update status
-        if customer_df != last_df:
+        latest_cus_df = get_latest_cus_df()
+        if get_latest_cus_df() != last_df:
             # do face recognition
-            fr_helper.recognize_df(customer_df)
+            fr_helper.recognize_df(latest_cus_df)
 
-            last_df = customer_df
+            last_df = latest_cus_df
             u_timer.reset()
             # work_flag = False  # only do 1 time
 
