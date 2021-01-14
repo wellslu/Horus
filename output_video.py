@@ -35,15 +35,25 @@ class VideoTool:
 
     @staticmethod
     def images_to_video(img_list: Union[str, list], output_path: str, fps=OUTPUT_DEFAULT_FPS):
+        img_path_ls = list()
         if isinstance(img_list, str):
-            img_list = list(list_images(img_list))
+            img_path_ls = list(list_images(img_list))
+            img_path_ls.sort()
+
+        msg = "loading images..."
+        print(msg)
+        img_queue = list()
+        for img_path in tqdm(img_path_ls):
+            img_queue.append(cv2.imread(img_path))
 
         fourcc = VideoTool.get_fourcc(output_path)
-        height, width, _ = img_list[0].shape
+        height, width, _ = img_queue[0].shape
         size = (width, height)
         out = cv2.VideoWriter(output_path, fourcc, fps, size)
 
-        for frame in tqdm(img_list):
+        msg = "writing images..."
+        print(msg)
+        for frame in tqdm(img_queue):
             out.write(frame)
 
         out.release()
@@ -61,7 +71,10 @@ class VideoTool:
 
         return result
 
+
 if __name__ == '__main__':
+    print('start')
     vt = VideoTool()
     origin_video = vt.get_video_meta('results/video_2.mp4')
-    vt.images_to_video('results/frame', 'results/output.mp4', origin_video['fps'])
+    print(origin_video)
+    vt.images_to_video('results/frame', 'output.mp4', 60)
