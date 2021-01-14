@@ -58,12 +58,15 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
             sql_code = f'''UPDATE customer 
                                         SET leave_time={frame_id}
                                         WHERE cid=\'{obj_id}\''''
-            try:
-                sql.write_cutomer_table(sql_code)
-            except Exception as e :
-                print(e)
-                time.sleep(0.2)
-                sql = SQL()
+            flag = True
+            while flag:
+                try:
+                    sql.write_cutomer_table(sql_code)
+                    flag = False
+                except Exception as e :
+                    print(e)
+                    time.sleep(0.2)
+                    sql = SQL()
             
         else:
             sql_code = f'''INSERT INTO `customer` (`cid`, `customer_img`, `enter_time`, `leave_time`) 

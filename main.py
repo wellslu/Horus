@@ -75,11 +75,18 @@ def launch_reid():
             #             new_data={'last_cid' : cid_record},
             #             where={'cid' : cid}
             #             )
-            if len(reid_agent.update_ls) != 0:
-                exe_query_many(db_conn,
-                                query="UPDATE customer SET last_cid = %s WHERE cid = %s ",
-                                data=[(v,i) for i,v in reid_agent.update_ls])
             
+        elif len(reid_agent.update_ls) != 0:
+            print(f'[Reid][INFO] - updating on epoch{epoch}/{max_epoch}\n\t{reid_agent.update_ls}')
+
+            while get_latest_cus_status() == False:
+                time.sleep(2)
+                # UPDATE customer SET `mid` = 'M-h7ed' WHERE `id` = 1
+            
+            exe_query_many(db_conn,
+                            query="UPDATE customer SET `last_cid` = '%s' WHERE `cid` = '%s'",
+                            data=[(v,i) for i,v in reid_agent.update_ls])
+            reid_agent.update_ls = []
         else:
             print(f'[Reid][INFO] - waiting on epoch{epoch}/{max_epoch}')
         # 更新運行時間
@@ -168,7 +175,9 @@ def launch_jde(opt):
 
 
 if __name__ == '__main__':
-    cus_df_ls = [pd.DataFrame(columns=['id', 'cid', 'last_id', 'mid', 'customer_img', 'enter_time', 'leave_time', 'created_at', 'updated_at']), True]
+    cus_df_ls = [pd.DataFrame(columns=['id', 'cid', 'last_id', 'mid', 'customer_img', 'enter_time', 'leave_time', 'created_at', 'updated_at']),
+                True]
+
     parser = argparse.ArgumentParser(prog='demo.py')
     parser.add_argument('--cfg', type=str, default='JDE/cfg/yolov3_1088x608.cfg', help='cfg file path')
     parser.add_argument('--weights', type=str, default='JDE/weights/weight.pt', help='path to weights file')
