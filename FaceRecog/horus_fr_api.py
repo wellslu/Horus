@@ -61,7 +61,7 @@ def do_face_pipeline(img_path: str, face_capturer: FaceCapturer, lmk_scanner: LM
     face_grid = get_face_grid_from_portrait(img_path, face_capturer, lmk_scanner)
     if face_grid is None:
         msg = f"[FACE-PIPELINE] - Failed to fetch face grid. Image: {img_path}"
-        print(msg)
+        # print(msg)
         return
 
     yaw, pitch, roll = get_pose(face_grid)

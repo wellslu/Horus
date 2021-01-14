@@ -24,7 +24,7 @@ fr_uidx = 0
 
 # >>>>>> face recognition module >>>>>>
 def launch_face_recog():
-    msg = '[INFO] - face recog thread start.'
+    msg = '[FACE-RECOG][INFO] - face recog thread start.'
     print(msg)
 
     # const var
@@ -55,8 +55,6 @@ def launch_face_recog():
     while work_flag:
         # check update status
         if fr_uidx != last_fr_uidx:
-            print(f"prepare to work, nud: {sec_to_hms(u_timer.no_update_duration())} \n")
-
             # do face recognition
             fr_helper.recognize()
 
@@ -72,10 +70,10 @@ def launch_face_recog():
         if u_timer.no_update_duration() > listen_duration:
             work_flag = False
             duration_str = sec_to_hms(u_timer.no_update_duration())
-            msg = f"[VITAL] - The database has not updated for {duration_str}, prepare to close job. \n"
+            msg = f"[FACE-RECOG][VITAL] - The database has not updated for {duration_str}, prepare to close job. \n"
             print(msg)
 
-    msg = f"[VITAL] - face recog thread finish."
+    msg = f"[FACE-RECOG][VITAL] - face recog thread finish."
     print(msg)
 
 
@@ -91,7 +89,7 @@ def launch_face_recog():
 def fake_mot():
     global fr_uidx
 
-    msg = '[INFO] - mot thread start.\n'
+    msg = '[FAKE-MOT][INFO] - mot thread start.\n'
     print(msg)
 
     sleep_interval = 5
@@ -102,7 +100,7 @@ def fake_mot():
         fr_uidx += 1
         flag = False  # ***
 
-    msg = '[INFO] - mot thread finished. \n'
+    msg = '[FAKE-MOT][INFO] - mot thread finished. \n'
     print(msg)
 
 
