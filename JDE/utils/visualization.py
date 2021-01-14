@@ -4,7 +4,6 @@ import os
 import pandas as pd
 from JDE.utils.utils import mkdir_if_missing
 
-
 def tlwhs_to_tlbrs(tlwhs):
     tlbrs = np.copy(tlwhs)
     if len(tlbrs) == 0:
@@ -29,7 +28,6 @@ def resize_image(image, max_size=800):
 
 
 def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, scores=None, frame_id=0, fps=0., ids2=None):
-    global customer_df
     cutomer_table = pd.DataFrame(sql.read_cutomer_table())
 
     im = np.ascontiguousarray(np.copy(image))
@@ -88,7 +86,7 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, scores=None, frame_id=0, 
         else:
             cv2.putText(im, f'cid : {id_text}   mid : {mid}', (intbox[0], intbox[1] + 30),
                         cv2.FONT_HERSHEY_PLAIN, text_scale, (0, 0, 255),thickness=text_thickness)
-    customer_df = cutomer_table
+    pd.to_pickle(cutomer_table, 'customer_table.pkl')
     return im
 
 
