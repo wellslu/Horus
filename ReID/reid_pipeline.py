@@ -53,7 +53,7 @@ class Agent:
     def get_new_update(self, data:pd.DataFrame):
         # self.data_track = data.copy()
         new = data.copy()
-        new['frame_num'] = new.leave_time - new.enter_time
+        new['frame_num'] = new['leave_time'] - new['enter_time']
         new = new[new['frame_num'] >= self.first_check_frame]
         track = new[(~new['cid'].isin(self.finish_dt.keys())) & (~new['cid'].isin(self.blank_out_ls))]
 
