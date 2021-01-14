@@ -10,7 +10,7 @@ import warnings
 from ReID.reid_pipeline import Agent
 
 # JDE
-from out_put.video import mk_video
+from output_video import mk_video
 from JDE.jde_start import jde_launch
 
 # FaceRecog
