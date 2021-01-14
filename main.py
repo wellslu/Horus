@@ -10,7 +10,7 @@ import warnings
 from ReID.reid_pipeline import Agent
 
 # JDE
-from out_put.video import mk_video
+from output_video import mk_video
 from JDE.jde_start import jde_launch
 
 # FaceRecog
@@ -55,10 +55,8 @@ def launch_reid():
         reid_agent.get_new_update(get_latest_cus_df())
 
         if reid_agent.task_queue.qsize()!=0:
-            print('[Reid][INFO] - working')
+            print(f'[Reid][INFO] - working on epoch{epoch}')
             reid_agent.run()
-
-            print('[Reid][INFO] - update db')
 
             for cid, cid_record in reid_agent.update_ls:
                 update_data_with_conn(db_conn,
@@ -66,7 +64,8 @@ def launch_reid():
                         new_data={'last_cid' : cid_record},
                         where={'cid' : cid}
                         )
-
+        else:
+            print(f'[Reid][INFO] - waiting on epoch{epoch}')
         # 更新運行時間
         if reid_agent.timeout <= (time.time() - reid_agent.last_run_time):
             print('timeout - No operation within {} minutes'.format(reid_agent.timeout/60))
@@ -176,5 +175,5 @@ if __name__ == '__main__':
     face_recog_thread = Thread(target=launch_face_recog)
     face_recog_thread.start()
 
-    reid_thread = Thread(target=launch_reid)
-    reid_thread.start()
+    # reid_thread = Thread(target=launch_reid)
+    # reid_thread.start()
