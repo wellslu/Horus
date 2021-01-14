@@ -49,6 +49,7 @@ opencv-contrib-python
 
 # ReID
 ipython
+queue
 
 # other
 termcolor
