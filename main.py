@@ -11,7 +11,7 @@ from FaceRecog.horus_toolkit import sec_to_hms
 from FaceRecog.horus_toolkit.db_tool import get_db_conn
 
 # >>>>>> listened variables >>>>>>
-fr_uidx = 0
+customer_df = None
 
 
 # <<<<<< listened variables <<<<<<
@@ -48,17 +48,17 @@ def launch_face_recog():
                                       customer_table_name)
 
     # face recog work
-    last_fr_uidx = fr_uidx
+    last_df = customer_df
     u_timer = UpdateTimer()
 
     work_flag = True
     while work_flag:
         # check update status
-        if fr_uidx != last_fr_uidx:
+        if customer_df != last_df:
             # do face recognition
-            fr_helper.recognize()
+            fr_helper.recognize_df(customer_df)
 
-            last_fr_uidx = fr_uidx
+            last_df = customer_df
             u_timer.reset()
             # work_flag = False  # only do 1 time
 
