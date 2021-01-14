@@ -1,4 +1,5 @@
 # coding: utf-8
+import os
 import time
 from threading import Thread
 import argparse
@@ -8,6 +9,7 @@ import warnings
 
 # ReID
 from ReID.reid_pipeline import Agent
+from ReID.utils import get_data
 
 # JDE
 from output_video import mk_video
@@ -169,11 +171,14 @@ if __name__ == '__main__':
     parser.add_argument('--customer', type=list, default=cus_df_ls)
     opt = parser.parse_args()
 
+    if not os.path.exists('video_2.mp4'):
+        get_data(path='video_2.mp4', file_id='1TubpGa5D4E-UqcJ3Pst5gE0BLe8kG96')
+
     mot_thread = Thread(target=launch_jde, args=(opt,))
     mot_thread.start()
 
     face_recog_thread = Thread(target=launch_face_recog)
     face_recog_thread.start()
 
-    # reid_thread = Thread(target=launch_reid)
-    # reid_thread.start()
+    reid_thread = Thread(target=launch_reid)
+    reid_thread.start()
