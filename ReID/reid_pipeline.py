@@ -11,7 +11,11 @@ sys.path.append('..')
 import os
 import time
 import pandas as pd
-from queue import SimpleQueue
+
+try:
+   from queue import SimpleQueue
+except ImportError:
+   from queue import Queue as SimpleQueue
 
 from .reid import ReidMatch
 

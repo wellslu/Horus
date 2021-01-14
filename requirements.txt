@@ -42,6 +42,7 @@ yacs
 # JDE
 motmetrics
 cython_bbox
+lap
 
 # FaceRecog
 imutils
