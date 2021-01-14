@@ -69,24 +69,28 @@ def launch_reid():
             reid_agent.run()
             
         elif len(reid_agent.update_ls) != 0:
-            print(f'[Reid][INFO] - updating on epoch{epoch}/{max_epoch}\n\t{reid_agent.update_ls}')
+            print(f'[Reid][INFO] - updating on epoch{epoch}/{max_epoch} - {reid_agent.update_ls}')
 
             while get_latest_cus_status() == False:
                 time.sleep(2)
                 # UPDATE customer SET `mid` = 'M-h7ed' WHERE `id` = 1
 
-            for cid, cid_record in reid_agent.update_ls:
-                time.sleep(0.2)
-                update_data_with_conn(db_conn,
-                        table_name='customer',
-                        new_data={'last_cid' : cid_record},
-                        where={'cid' : cid}
-                        )
+            # for cid, cid_record in reid_agent.update_ls:
+            #     time.sleep(0.2)
+            #     update_data_with_conn(db_conn,
+            #             table_name='customer',
+            #             new_data={'last_cid' : cid_record},
+            #             where={'cid' : cid}
+            #             )
+                
+                
 
-            # exe_query_many(db_conn,
-            #                 query="UPDATE customer SET `last_cid` = '%s' WHERE `cid` = '%s'",
-            #                 data=[(v,i) for i,v in reid_agent.update_ls])
-            reid_agent.clear_update_ls()
+            exe_query_many(db_conn,
+                            query="UPDATE customer SET `last_cid` = %s WHERE `cid` = %s",
+                            data=[(v,i) for i,v in reid_agent.update_ls])
+            db_conn.commit()
+            if len(reid_agent.update_ls) == 0:
+                reid_agent.clear_update_ls()
 
         else:
             print(f'[Reid][INFO] - waiting on epoch{epoch}/{max_epoch}')
