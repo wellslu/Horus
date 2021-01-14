@@ -51,7 +51,7 @@ def launch_reid():
             first_check_frame=12, 
             second_check_frame=50,
             timeout=600,
-            frame_dead_num=100
+            frame_dead_num=10
         )
 
     epoch = 0

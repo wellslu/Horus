@@ -79,6 +79,7 @@ class Agent:
                         # 符合 50 張 -> second check
                         self.task_queue.put((cid, img_path))
                         # self.finish_ls.append(cid)
+                        # self.finish_dt.update({cid:img_path})
                     
             else:
                 # first check
@@ -113,7 +114,7 @@ if __name__ == "__main__":
         first_check_frame=12, 
         second_check_frame=50,
         timeout=600,
-        frame_dead_num=10
+        frame_dead_num=50
     )
 
     epoch = 0

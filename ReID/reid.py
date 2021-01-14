@@ -240,6 +240,8 @@ class ReidMatch(FeatureExtractionDemo):
         return cos_sim
 
     def _get_random_item(self, input_ls, size, sample_in_bin):
+        if size<=len(input_ls):
+            return None
         assert size<=len(input_ls), "The number of samples must be less than the number of images in the folder"
 
         input_ls = [(int((i.split('.')[0])), i) for i in input_ls]
