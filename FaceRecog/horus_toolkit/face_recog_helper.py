@@ -45,7 +45,7 @@ class FaceRecogHelper:
             member_cand_ls.sort(key=lambda x: x[1], reverse=True)
 
     def recognize(self):
-        msg = "[INFO] - Start recognizing..."
+        msg = "[FACE-RECOG][INFO] - Start recognizing..."
         print(msg)
 
         customer_df = get_table_df_with_conn(self.db_conn, self.customer_table_name)
@@ -54,17 +54,17 @@ class FaceRecogHelper:
         # work
         self._workspace(customer_df)
 
-        msg = "[INFO] - Finish all recognizing work"
+        msg = "[FACE-RECOG][INFO] - Finish all recognizing work"
         print(msg)
 
     def recognize_df(self, customer_df: DataFrame):
-        msg = "[INFO] - Start recognizing..."
+        msg = "[FACE-RECOG][INFO] - Start recognizing..."
         print(msg)
 
         # work
         self._workspace(customer_df)
 
-        msg = "[INFO] - Finish all recognizing work"
+        msg = "[FACE-RECOG][INFO] - Finish all recognizing work"
         print(msg)
 
     def _workspace(self, cus_df: DataFrame):
@@ -96,16 +96,16 @@ class FaceRecogHelper:
 
             face_encoding = do_face_pipeline(cus_img_path, self.face_capturer, self.lmk_scanner, self.ag_face_recog)
             if face_encoding is None:
-                msg = f"[INFO] - Failed during face pipeline. image: {cus_img_path}"
+                msg = f"[FACE-RECOG][INFO] - Failed during face pipeline. image: {cus_img_path}"
                 # print(msg)
                 self.fp_failed_pool.add(cus_img_path)
                 continue
 
-            msg = f"[INFO] - Try to find member in image: {cus_img_path}"
+            msg = f"[FACE-RECOG][INFO] - Try to find member in image: {cus_img_path}"
             print(msg)
             recog_result = self._find_member(face_encoding)
             if recog_result.has_member:
-                msg = f"[INFO] - Recog Result of image: {cus_img_path}\n{recog_result}"
+                msg = f"[FACE-RECOG][INFO] - Recog Result of image: {cus_img_path}\n{recog_result}"
                 print(msg)
                 return recog_result.ml_member
 
@@ -115,7 +115,7 @@ class FaceRecogHelper:
         # compare with member face data
         for mid, member_encoding in self.mf_data.items():
             is_matched, similarity = self.ag_face_recog.verify_member(member_encoding, face_encoding)
-            msg = f"[INFO] - Is matched with member: {is_matched}  Similarity: {similarity}"
+            msg = f"[FACE-RECOG][INFO] - Is matched with member: {is_matched}  Similarity: {similarity}"
             print(msg)
             if is_matched:
                 member_cand_ls.append((mid, similarity))

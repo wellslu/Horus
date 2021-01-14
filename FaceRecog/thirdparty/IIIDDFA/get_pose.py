@@ -105,5 +105,5 @@ def get_pose(img: Union[str, np.ndarray]) -> Union[tuple, None]:
     try:
         return _workspace(_dict2namedtuple(args))
     except Exception as e:
-        msg = f"Failed to get YPR via 3DDFA. Error: {e}"
+        msg = f"[FACE-RECOG][WARN] - Failed to get YPR via 3DDFA. Error: {e}"
         print(msg)
