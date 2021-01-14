@@ -51,7 +51,19 @@ class FaceRecogHelper:
         customer_df = get_table_df_with_conn(self.db_conn, self.customer_table_name)
         print(customer_df)
 
+        # work
         self._workspace(customer_df)
+
+        msg = "[INFO] - Finish all recognizing work"
+        print(msg)
+
+    def recognize_df(self, customer_df: DataFrame):
+        msg = "[INFO] - Start recognizing..."
+        print(msg)
+
+        # work
+        self._workspace(customer_df)
+
         msg = "[INFO] - Finish all recognizing work"
         print(msg)
 
