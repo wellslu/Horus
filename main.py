@@ -86,7 +86,8 @@ def launch_reid():
             # exe_query_many(db_conn,
             #                 query="UPDATE customer SET `last_cid` = '%s' WHERE `cid` = '%s'",
             #                 data=[(v,i) for i,v in reid_agent.update_ls])
-            reid_agent.clear_update_ls()
+            if len(reid_agent.update_ls) == 0:
+                reid_agent.clear_update_ls()
 
         else:
             print(f'[Reid][INFO] - waiting on epoch{epoch}/{max_epoch}')
