@@ -85,7 +85,7 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
             mid = list(df['mid'])[0]
         else:
             mid = None
-        if len(df) != 0 and list(df['last_cid'])[0] is not None and list(df['last_cid'])[0] != -1:
+        if len(df) != 0 and list(df['last_cid'])[0] is not None and list(df['last_cid'])[0] != -1 and not np.isnan(list(df['last_cid'])[0]):
             id_text = str(list(df['last_cid'])[0])
         if ids2 is not None:
             id_text = id_text + ', {}'.format(int(ids2[i]))
