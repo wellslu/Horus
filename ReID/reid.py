@@ -76,11 +76,11 @@ class ReidMatch(FeatureExtractionDemo):
                         }
         
         # Sampling
-        print("\nSampling...")
+        # print("\nSampling...")
         imgs_in_f1 = self._get_random_item(input_ls=os.listdir(f1), size=sample_nums, sample_in_bin=sample_in_bin)
         imgs_in_f2 = self._get_random_item(input_ls=os.listdir(f2), size=sample_nums, sample_in_bin=sample_in_bin)
-        print("samples in folder1: {}".format(imgs_in_f1))
-        print("samples in folder2: {}".format(imgs_in_f2))
+        # print("samples in folder1: {}".format(imgs_in_f1))
+        # print("samples in folder2: {}".format(imgs_in_f2))
 
         imgs_in_f1 = [(1, os.path.join(f1, file)) for file in imgs_in_f1]
         imgs_in_f2 = [(2, os.path.join(f2, file)) for file in imgs_in_f2]
@@ -92,7 +92,7 @@ class ReidMatch(FeatureExtractionDemo):
         df.columns = ["folder", "img_path"]
 
         # Extracting features
-        print("\nExtracting features...")
+        # print("\nExtracting features...")
         start_time = time.time()
         feat_paths, feats = self.get_features(
                                     paths=df['img_path'].to_list(), 
@@ -104,14 +104,14 @@ class ReidMatch(FeatureExtractionDemo):
         result["Path"].update({"f1_feature_paths":df.loc[df['folder']==1, 'feature_path'].to_list()})
         result["Path"].update({"f2_feature_paths":df.loc[df['folder']==2, 'feature_path'].to_list()})
         result["Time"].update({"extracting_features_timeuse":time.time() - start_time})
-        print("time use: ", result["Time"]["extracting_features_timeuse"])
+        # print("time use: ", result["Time"]["extracting_features_timeuse"])
 
         # Pairing image
         pair_df = pd.DataFrame(list(itertools.combinations(df['img_path'], 2)))
         pair_df.columns = ["img1", "img2"]
 
         # Calculate similarity
-        print("\nCalculate similarity...")
+        # print("\nCalculate similarity...")
         start_time = time.time()
         path_folder_dt = {v:(k, f, fp) for k,v,f,fp in df.values} # {img_path:(folder, feature, feature_path)}
         for f in [1,2]:
@@ -123,7 +123,7 @@ class ReidMatch(FeatureExtractionDemo):
         if not same_folder:
             pair_df = pair_df[pair_df['img1_folder'] != pair_df['img2_folder']]
 
-        print(pair_df.shape[0], "pairs") 
+        # print(pair_df.shape[0], "pairs") 
         result["Result"].update({"pair_nums":pair_df.shape[0]})
 
         sim = []
@@ -135,11 +135,11 @@ class ReidMatch(FeatureExtractionDemo):
         result["Result"].update({"similarity_variance": pair_df['cosine_similarity'].var()})
 
         result["Time"].update({"calculate_similarity_timeuse":time.time() - start_time})
-        print("time use: ", result["Time"]["calculate_similarity_timeuse"])
+        # print("time use: ", result["Time"]["calculate_similarity_timeuse"])
 
         support_nums = pair_df[pair_df.cosine_similarity > sim_threshold].shape[0]
         match_ratio = support_nums / pair_df.shape[0]
-        print("\nmatch ratio: ", match_ratio)
+        # print("\nmatch ratio: ", match_ratio)
         result["Result"].update({"support_nums": support_nums})
         result["Result"].update({"match_ratio":match_ratio})
         result["Result"].update({"match_result":match_ratio>=sup_threshold})
@@ -147,7 +147,7 @@ class ReidMatch(FeatureExtractionDemo):
         pair_df.drop(['img1_feature', 'img2_feature'], axis=1, inplace=True)
 
         result["Time"].update({"Total_timeuse":time.time() - START_time})
-        print("\n[Total time use: {}]".format(result["Time"]["Total_timeuse"]))
+        # print("\n[Total time use: {}]".format(result["Time"]["Total_timeuse"]))
 
         if result_table_output:
             pair_df.to_csv(result_table_output, index=False)

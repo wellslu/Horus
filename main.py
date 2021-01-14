@@ -54,7 +54,10 @@ def launch_reid():
         reid_agent.get_new_update(get_latest_cus_df())
 
         if reid_agent.task_queue.qsize()!=0:
+            print('[Reid][INFO] - working')
             reid_agent.run()
+
+        print('[Reid][INFO] - update db')
 
         for cid, cid_record in reid_agent.update_ls:
             update_data_with_conn(db_conn,
