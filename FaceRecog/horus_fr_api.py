@@ -67,13 +67,13 @@ def do_face_pipeline(img_path: str, face_capturer: FaceCapturer, lmk_scanner: LM
     yaw, pitch, roll = get_pose(face_grid)
     if yaw > FACE_POSE_THRESH or pitch > FACE_POSE_THRESH:
         msg = f"[FACE-PIPELINE] - The face pose is out of threshold({FACE_POSE_THRESH}). Image: {img_path}"
-        print(msg)
+        # print(msg)
         return
 
     face_encoding = get_face_encoding(img_path, ag_face_recog)
     if face_encoding is None:
         msg = f"[FACE-PIPELINE] - Failed to encode face. Image: {img_path}"
-        print(msg)
+        # print(msg)
         return
 
     return face_encoding
