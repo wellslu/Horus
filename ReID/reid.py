@@ -57,8 +57,6 @@ class ReidMatch(FeatureExtractionDemo):
         super(ReidMatch, self).__init__(self.cfg, parallel)
         self._warm_up_model(example_img)
 
-
-
     def match_two_folder(self, f1, f2, output_folder, sample_nums, sim_threshold, sup_threshold, sample_in_bin,
                          same_folder=False, save_feature=True, result_output=None, result_table_output=None):
         for path in [f1, f2]:
