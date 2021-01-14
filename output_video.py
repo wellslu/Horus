@@ -60,3 +60,8 @@ class VideoTool:
         result['fps'] = fps
 
         return result
+
+if __name__ == '__main__':
+    vt = VideoTool()
+    origin_video = vt.get_video_meta('results/video_2.mp4')
+    vt.images_to_video('results/frame', 'results/output.mp4', origin_video['fps'])
