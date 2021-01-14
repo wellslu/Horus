@@ -138,7 +138,10 @@ class ReidMatch(FeatureExtractionDemo):
         # print("time use: ", result["Time"]["calculate_similarity_timeuse"])
 
         support_nums = pair_df[pair_df.cosine_similarity > sim_threshold].shape[0]
-        match_ratio = support_nums / pair_df.shape[0]
+        if pair_df.shape[0] != 0:
+            match_ratio = support_nums / pair_df.shape[0]
+        else:
+            match_ratio = 0.0
         # print("\nmatch ratio: ", match_ratio)
         result["Result"].update({"support_nums": support_nums})
         result["Result"].update({"match_ratio":match_ratio})

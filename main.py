@@ -21,7 +21,7 @@ from FaceRecog.horus_fr_api import get_mf_data
 from FaceRecog.horus_toolkit import UpdateTimer
 from FaceRecog.horus_toolkit import get_face_recog_helper
 from FaceRecog.horus_toolkit import sec_to_hms
-from FaceRecog.horus_toolkit.db_tool import get_db_conn, update_data_with_conn
+from FaceRecog.horus_toolkit.db_tool import get_db_conn, exe_query_many
 from FaceRecog.Facer.ult import load_pkl
 
 warnings.filterwarnings('ignore')
@@ -36,8 +36,9 @@ def get_latest_cus_df(cus_df_path='customer.pkl') -> DataFrame:
 
 # >>>>>> re-id module >>>>>>
 def launch_reid():
-    update_freq = 1 # second
-    max_epoch = 100
+    update_freq = 5 # second
+
+    max_epoch = 10000
     db_conn = get_db_conn()
     
     reid_agent = Agent(
@@ -53,21 +54,31 @@ def launch_reid():
     epoch = 0
     while True:
         epoch_start_time = time.time()
+        new_data = get_latest_cus_df()
+        while new_data.shape[0] == 0:
+            time.sleep(update_freq)
+            new_data = get_latest_cus_df()
 
-        reid_agent.get_new_update(get_latest_cus_df())
+        reid_agent.get_new_update(new_data)
 
         if reid_agent.task_queue.qsize()!=0:
-            print(f'[Reid][INFO] - working on epoch{epoch}')
+            print(f'[Reid][INFO] - working on epoch{epoch}/{max_epoch}')
             reid_agent.run()
 
-            for cid, cid_record in reid_agent.update_ls:
-                update_data_with_conn(db_conn,
-                        table_name='customer',
-                        new_data={'last_cid' : cid_record},
-                        where={'cid' : cid}
-                        )
+            # for cid, cid_record in reid_agent.update_ls:
+            #     time.sleep(0.2)
+            #     update_data_with_conn(db_conn,
+            #             table_name='customer',
+            #             new_data={'last_cid' : cid_record},
+            #             where={'cid' : cid}
+            #             )
+
+            exe_query_many(db_conn,
+                            query="UPDATE customer SET last_cid = %s WHERE cid = %s ",
+                            data=[(v,i) for i,v in reid_agent.update_ls])
+            
         else:
-            print(f'[Reid][INFO] - waiting on epoch{epoch}')
+            print(f'[Reid][INFO] - waiting on epoch{epoch}/{max_epoch}')
         # 更新運行時間
         if reid_agent.timeout <= (time.time() - reid_agent.last_run_time):
             print('timeout - No operation within {} minutes'.format(reid_agent.timeout/60))
@@ -148,7 +159,7 @@ def launch_face_recog():
 # >>>>>> mot module >>>>>>
 def launch_jde(opt):
     jde_launch(opt)
-    mk_video('video_2.mp4')
+    mk_video(opt.output)
 # <<<<<< mot module <<<<<<
 
 
@@ -164,15 +175,17 @@ if __name__ == '__main__':
     parser.add_argument('--nms-thres', type=float, default=0.4, help='iou threshold for non-maximum suppression')
     parser.add_argument('--min-box-area', type=float, default=200, help='filter out tiny boxes')
     parser.add_argument('--track-buffer', type=int, default=30, help='tracking buffer')
-    parser.add_argument('--input-video', type=str, default='video_2.mp4', help='expected input root path')
+    parser.add_argument('--input-video', type=str, default='input_video/video_2.mp4', help='expected input root path')
+    parser.add_argument('--output', type=str, default='output_video/video_2.mp4', help='expected input root path')
+
     parser.add_argument('--output-format', type=str, default='video', choices=['video', 'text'],
                         help='Expected output format. Video or text.')
     parser.add_argument('--output-root', type=str, default='results', help='expected output root path')
     parser.add_argument('--customer', type=list, default=cus_df_ls)
     opt = parser.parse_args()
 
-    if not os.path.exists('video_2.mp4'):
-        get_data(path='video_2.mp4', file_id='1TubpGa5D4E-UqcJ3Pst5gE0BLe8kG96')
+    # if not os.path.exists('video_2.mp4'):
+    #     get_data(path='video_2.mp4', file_id='1TubpGa5D4E-UqcJ3Pst5gE0BLe8kG96')
 
     mot_thread = Thread(target=launch_jde, args=(opt,))
     mot_thread.start()

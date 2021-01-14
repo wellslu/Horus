@@ -85,6 +85,9 @@ def exe_query(conn: Connection, query: str):
     with conn.cursor() as cursor:
         cursor.execute(query)
 
+def exe_query_many(conn: Connection, query: str, data: list):
+    with conn.cursor() as cursor:
+        cursor.executemany(query, data)
 
 def insert_data_with_conn(conn: Connection, table_name: str, data: Union[dict], db_name=None):
     if db_name is None:

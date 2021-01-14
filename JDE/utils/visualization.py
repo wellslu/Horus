@@ -1,8 +1,10 @@
 import numpy as np
 import cv2
 import os
+import time
 import pandas as pd
 from JDE.utils.utils import mkdir_if_missing
+from JDE.utils.sql import SQL # 2021/1/14 by 彥南
 
 def tlwhs_to_tlbrs(tlwhs):
     tlbrs = np.copy(tlwhs)
@@ -55,7 +57,15 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
             sql_code = f'''UPDATE customer 
                                         SET leave_time={frame_id}
                                         WHERE cid=\'{obj_id}\''''
-            sql.write_cutomer_table(sql_code)
+            # >>>>>>>>>> 2021/1/14 by 彥南 >>>>>>>>>>>
+            try:
+                sql.write_cutomer_table(sql_code)
+            except Exception as e :
+                print(e)
+                time.sleep(0.2)
+                sql = SQL()
+            # >>>>>>>>>> 2021/1/14 by 彥南 >>>>>>>>>>>
+            
         else:
             sql_code = f'''INSERT INTO `customer` (`cid`, `customer_img`, `enter_time`, `leave_time`) 
                                         VALUES (\'{obj_id}\', \'results/cid_png/{obj_id}\', {frame_id}, {frame_id})'''
