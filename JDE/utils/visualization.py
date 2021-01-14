@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import os
 import pandas as pd
-from utils.utils import mkdir_if_missing
+from JDE.utils.utils import mkdir_if_missing
 
 
 def tlwhs_to_tlbrs(tlwhs):
