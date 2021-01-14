@@ -8,7 +8,7 @@ import random
 import numpy as np
 import pandas as pd
 
-from predict.fastreid.utils.file_io import PathManager
+from .predict.fastreid.utils.file_io import PathManager
 
 def get_sample(input_folder, output_folder, sample_size, input_pid, output_tid) -> None:
     """

@@ -39,7 +39,7 @@ class ReidMatch(FeatureExtractionDemo):
 
             cosine_similarity: Calculate the cosine similarity between vector `a` and vector `b`
 
-            match_folders_under_path:
+            match_folders_under_path: 
 
             match_two_folder: 
 
@@ -159,14 +159,19 @@ class ReidMatch(FeatureExtractionDemo):
 
         return result
 
-    def get_features(self, paths, output_folder, save_feature=False):
+    def get_features(self, paths, output_folder, feature_name_level=2, save_feature=False):
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         feats = []
         feat_paths = []
         for path in paths:
             assert os.path.exists(path), "Can't find folder at {}".format(path)
+            
             name = path.replace('.png','.npy').replace("\\","_").replace("/","_")
+            if len(name.split('_')) < feature_name_level:
+                feature_name_level = len(name.split('_'))
+            name = '_'.join(name.split('_')[-feature_name_level:])
+
             output_path = os.path.join(output_folder, name)
 
             if os.path.exists(output_path):
