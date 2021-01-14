@@ -6,6 +6,9 @@ import pandas as pd
 from pandas import DataFrame
 import warnings
 
+# ReID
+from ReID.reid_pipeline import Agent
+
 # JDE
 from JDE.jde_start import jde_launch
 
@@ -15,7 +18,7 @@ from FaceRecog.horus_fr_api import get_mf_data
 from FaceRecog.horus_toolkit import UpdateTimer
 from FaceRecog.horus_toolkit import get_face_recog_helper
 from FaceRecog.horus_toolkit import sec_to_hms
-from FaceRecog.horus_toolkit.db_tool import get_db_conn
+from FaceRecog.horus_toolkit.db_tool import get_db_conn, update_data_with_conn
 from FaceRecog.Facer.ult import load_pkl
 
 warnings.filterwarnings('ignore')
@@ -29,7 +32,51 @@ def get_latest_cus_df(cus_df_path='customer.pkl') -> DataFrame:
 
 
 # >>>>>> re-id module >>>>>>
-# TODO re-id entry-point
+def launch_reid():
+    update_freq = 1 # second
+    max_epoch = 100
+    db_conn = get_db_conn()
+    
+    reid_agent = Agent(
+            output_folder="ReID/feature",
+            model_file="ReID/pretrain",
+            example_img="ReID/TEST/test_img/reid_example.png",
+            first_check_frame=12, 
+            second_check_frame=50,
+            timeout=600,
+            frame_dead_num=10
+        )
+
+    epoch = 0
+    while True:
+        epoch_start_time = time.time()
+
+        reid_agent.get_new_update(get_latest_cus_df())
+
+        if reid_agent.task_queue.qsize()!=0:
+            reid_agent.run()
+
+        for cid, cid_record in reid_agent.update_ls:
+            update_data_with_conn(db_conn,
+                    table_name='customer',
+                    new_data={'last_cid' : cid_record},
+                    where={'cid' : cid}
+                    )
+
+        # 更新運行時間
+        if reid_agent.timeout <= (time.time() - reid_agent.last_run_time):
+            print('timeout - No operation within {} minutes'.format(reid_agent.timeout/60))
+            break
+
+        epoch_run_time = time.time() - epoch_start_time
+
+        if  epoch_run_time < update_freq:
+            time.sleep(update_freq - epoch_run_time)
+            
+        epoch+=1
+        if epoch > max_epoch:
+            break
+                        
 # <<<<<< re-id module <<<<<<
 
 
@@ -94,16 +141,10 @@ def launch_face_recog():
 
 
 # >>>>>> mot module >>>>>>
-# TODO mot entry-point
-# <<<<<< mot module <<<<<<
-
-
-# >>>>>> fake mot module >>>>>>
 def launch_jde(opt):
     jde_launch(opt)
+# <<<<<< mot module <<<<<<
 
-
-# <<<<<< fake mot module <<<<<<
 
 
 if __name__ == '__main__':
@@ -123,8 +164,12 @@ if __name__ == '__main__':
     parser.add_argument('--output-root', type=str, default='results', help='expected output root path')
     parser.add_argument('--customer', type=list, default=cus_df_ls)
     opt = parser.parse_args()
+
     mot_thread = Thread(target=launch_jde, args=(opt,))
     mot_thread.start()
 
     face_recog_thread = Thread(target=launch_face_recog)
-    # face_recog_thread.start()
+    face_recog_thread.start()
+
+    reid_thread = Thread(target=launch_reid))
+    reid_thread.start()
