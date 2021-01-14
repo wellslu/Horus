@@ -31,7 +31,7 @@ def resize_image(image, max_size=800):
 
 def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_id=0, fps=0., ids2=None):
     opt.customer[1] = False
-    cutomer_table = pd.DataFrame(sql.read_cutomer_table())
+    customer_table = pd.DataFrame(sql.read_customer_table())
 
     im = np.ascontiguousarray(np.copy(image))
     im_h, im_w = im.shape[:2]
@@ -54,14 +54,14 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
         cv2.imwrite(os.path.join(cid_png + f'/{obj_id}', f'{frame_id}.png'),
                     im[int(y1 if y1 > 0 else 0): int(y1 + h if y1 + h > 0 else 0),
                     int(x1 if x1 > 0 else 0): int(x1 + w if x1 + w > 0 else 0)])
-        if len(cutomer_table) != 0 and len(cutomer_table[cutomer_table['cid'] == obj_id]) != 0:
+        if len(customer_table) != 0 and len(customer_table[customer_table['cid'] == obj_id]) != 0:
             sql_code = f'''UPDATE customer 
                                         SET leave_time={frame_id}
                                         WHERE cid=\'{obj_id}\''''
             flag = True
             while flag:
                 try:
-                    sql.write_cutomer_table(sql_code)
+                    sql.write_customer_table(sql_code)
                     flag = False
                 except Exception as e :
                     print(e)
@@ -71,16 +71,16 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
         else:
             sql_code = f'''INSERT INTO `customer` (`cid`, `customer_img`, `enter_time`, `leave_time`) 
                                         VALUES (\'{obj_id}\', \'results/cid_png/{obj_id}\', {frame_id}, {frame_id})'''
-            sql.write_cutomer_table(sql_code)
+            sql.write_customer_table(sql_code)
     for i, tlwh in enumerate(tlwhs):
         x1, y1, w, h = tlwh
         intbox = tuple(map(int, (x1, y1, x1 + w, y1 + h)))
         obj_id = obj_ids[i]
         id_text = '{}'.format(obj_id)
-        if len(cutomer_table) == 0:
+        if len(customer_table) == 0:
             df = pd.DataFrame()
         else:
-            df = cutomer_table[cutomer_table['cid'] == obj_id]
+            df = customer_table[customer_table['cid'] == obj_id]
         if len(df) != 0:
             mid = list(df['mid'])[0]
         else:
@@ -99,7 +99,7 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
             cv2.rectangle(im, intbox[0:2], intbox[2:4], (208, 216, 129), thickness=line_thickness)
             cv2.putText(im, f'cid : {id_text}   mid : {mid}', (intbox[0], intbox[1] + 30),
                         cv2.FONT_HERSHEY_PLAIN, text_scale, (208, 216, 129), thickness=text_thickness)
-    opt.customer[0] = cutomer_table
+    opt.customer[0] = customer_table
     opt.customer[1] = True
     return im
 

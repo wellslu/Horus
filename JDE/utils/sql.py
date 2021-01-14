@@ -12,14 +12,14 @@ class SQL(object):
         self.connection = pymysql.connect(**config)
         self.cursor = self.connection.cursor()
 
-    def read_cutomer_table(self):
+    def read_customer_table(self):
         sql_code = 'SELECT * FROM customer'
         self.cursor.execute(sql_code)
         result = self.cursor.fetchall()
         self.connection.commit()
         return result
 
-    def write_cutomer_table(self, sql_code):
+    def write_customer_table(self, sql_code):
         self.cursor.execute(sql_code)
         self.connection.commit()
 
