@@ -13,7 +13,7 @@ import time
 import pandas as pd
 from queue import SimpleQueue
 
-from ReID.reid import ReidMatch
+from .reid import ReidMatch
 
 __all__ = ["Agent"]
 
