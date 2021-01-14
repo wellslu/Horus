@@ -168,8 +168,7 @@ def launch_jde(opt):
 
 
 if __name__ == '__main__':
-    cus_df_ls = [pd.DataFrame(columns=['id', 'cid', 'last_id', 'mid', 'customer_img', 'enter_time', 'leave_time', 'created_at', 'updated_at'])]
-
+    cus_df_ls = [pd.DataFrame(columns=['id', 'cid', 'last_id', 'mid', 'customer_img', 'enter_time', 'leave_time', 'created_at', 'updated_at']), True]
     parser = argparse.ArgumentParser(prog='demo.py')
     parser.add_argument('--cfg', type=str, default='JDE/cfg/yolov3_1088x608.cfg', help='cfg file path')
     parser.add_argument('--weights', type=str, default='JDE/weights/weight.pt', help='path to weights file')
