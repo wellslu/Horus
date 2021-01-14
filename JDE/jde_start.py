@@ -35,11 +35,11 @@ def track(opt):
     # except Exception as e:
     #     logger.info(e)
 
-    if opt.output_format == 'video':
-        output_video_path = osp.join(result_root, 'result.mp4')
-        cmd_str = 'ffmpeg -f image2 -i {}/%05d.png -c:v copy {}'.format(osp.join(result_root, 'frame'),
-                                                                        output_video_path)
-        os.system(cmd_str)
+    # if opt.output_format == 'video':
+    #     output_video_path = osp.join(result_root, 'result.mp4')
+    #     cmd_str = 'ffmpeg -f image2 -i {}/%05d.png -c:v copy {}'.format(osp.join(result_root, 'frame'),
+    #                                                                     output_video_path)
+    #     os.system(cmd_str)
 
 
 def jde_launch(opt):

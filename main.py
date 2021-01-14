@@ -10,6 +10,7 @@ import warnings
 from ReID.reid_pipeline import Agent
 
 # JDE
+from out_put.video import mk_video
 from JDE.jde_start import jde_launch
 
 # FaceRecog
@@ -146,6 +147,7 @@ def launch_face_recog():
 # >>>>>> mot module >>>>>>
 def launch_jde(opt):
     jde_launch(opt)
+    mk_video(video_2.mp4)
 # <<<<<< mot module <<<<<<
 
 
