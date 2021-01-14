@@ -46,7 +46,7 @@ class FaceRecogHelper:
 
     def recognize(self):
         msg = "[FACE-RECOG][INFO] - Start recognizing..."
-        print(msg)
+        # print(msg)
 
         customer_df = get_table_df_with_conn(self.db_conn, self.customer_table_name)
         print(customer_df)
@@ -55,17 +55,17 @@ class FaceRecogHelper:
         self._workspace(customer_df)
 
         msg = "[FACE-RECOG][INFO] - Finish all recognizing work"
-        print(msg)
+        # print(msg)
 
     def recognize_df(self, customer_df: DataFrame):
         msg = "[FACE-RECOG][INFO] - Start recognizing..."
-        print(msg)
+        # print(msg)
 
         # work
         self._workspace(customer_df)
 
         msg = "[FACE-RECOG][INFO] - Finish all recognizing work"
-        print(msg)
+        # print(msg)
 
     def _workspace(self, cus_df: DataFrame):
         for i, row in cus_df.iterrows():
