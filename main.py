@@ -2,15 +2,13 @@
 import time
 from threading import Thread
 
-from FaceRecog.horus_fr_api import get_mf_data
-from FaceRecog.horus_toolkit.db_tool import get_db_conn
-from FaceRecog.horus_toolkit import FaceRecogHelper
-from FaceRecog.horus_toolkit import get_face_recog_helper
+# FaceRecog
 from FaceRecog.Facer.shortcut import get_face_capturer, get_lmk_scanner, get_ag_face_recog
+from FaceRecog.horus_fr_api import get_mf_data
 from FaceRecog.horus_toolkit import UpdateTimer
+from FaceRecog.horus_toolkit import get_face_recog_helper
 from FaceRecog.horus_toolkit import sec_to_hms
-
-from pprint import pprint as pp
+from FaceRecog.horus_toolkit.db_tool import get_db_conn
 
 # >>>>>> listened variables >>>>>>
 fr_uidx = 0

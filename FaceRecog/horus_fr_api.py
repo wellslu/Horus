@@ -6,16 +6,15 @@ Create Date: 2021/1/13
 # coding: utf-8
 import ntpath
 import os
-
 from typing import Union
+
 from numpy import ndarray
 from pymysql.connections import Connection
+
+from FaceRecog.Facer import FaceCapturer, LMKScanner, AGFaceRecog
+from .Facer.shortcut import get_face_grid_from_portrait, get_face_encoding
 from .Facer.ult import load_pkl
 from .horus_toolkit.db_tool import get_table_df_with_conn
-from FaceRecog.Facer import FaceCapturer, LMKScanner, AGFaceRecog
-from pymysql.connections import Connection
-from imutils.paths import list_images
-from .Facer.shortcut import get_face_grid_from_portrait, get_face_encoding
 from .thirdparty.IIIDDFA.get_pose import get_pose
 
 IMG_COUNT_THRESH = 1
