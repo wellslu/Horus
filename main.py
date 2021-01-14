@@ -22,8 +22,8 @@ warnings.filterwarnings('ignore')
 
 # >>>>>> listened variables >>>>>>
 def get_latest_cus_df(cus_df_path='customer.pkl') -> DataFrame:
-    return load_pkl(cus_df_path)
-
+    # return load_pkl(cus_df_path)
+    return cus_df_ls[0]
 
 # <<<<<< listened variables <<<<<<
 
@@ -76,6 +76,7 @@ def launch_face_recog():
 
         else:
             # print('wait for update...')
+            time.sleep(3)
             pass
 
         # check no update duration
@@ -106,8 +107,8 @@ def launch_jde(opt):
 
 
 if __name__ == '__main__':
-    pd.to_pickle(pd.DataFrame(
-        columns=['id', 'cid', 'last_id', 'mid', 'customer_img', 'enter_time', 'leave_time', 'created_at', 'updated_at']), 'customer.pkl')
+    cus_df_ls = [pd.DataFrame(columns=['id', 'cid', 'last_id', 'mid', 'customer_img', 'enter_time', 'leave_time', 'created_at', 'updated_at'])]
+
     parser = argparse.ArgumentParser(prog='demo.py')
     parser.add_argument('--cfg', type=str, default='JDE/cfg/yolov3_1088x608.cfg', help='cfg file path')
     parser.add_argument('--weights', type=str, default='JDE/weights/weight.pt', help='path to weights file')
@@ -120,9 +121,10 @@ if __name__ == '__main__':
     parser.add_argument('--output-format', type=str, default='video', choices=['video', 'text'],
                         help='Expected output format. Video or text.')
     parser.add_argument('--output-root', type=str, default='results', help='expected output root path')
+    parser.add_argument('--customer', type=list, default=cus_df_ls)
     opt = parser.parse_args()
     mot_thread = Thread(target=launch_jde, args=(opt,))
     mot_thread.start()
 
-    face_recog_thread = Thread(target=launch_face_recog())
-    face_recog_thread.start()
+    face_recog_thread = Thread(target=launch_face_recog)
+    # face_recog_thread.start()
