@@ -57,14 +57,14 @@ def launch_reid():
             print('[Reid][INFO] - working')
             reid_agent.run()
 
-        print('[Reid][INFO] - update db')
+            print('[Reid][INFO] - update db')
 
-        for cid, cid_record in reid_agent.update_ls:
-            update_data_with_conn(db_conn,
-                    table_name='customer',
-                    new_data={'last_cid' : cid_record},
-                    where={'cid' : cid}
-                    )
+            for cid, cid_record in reid_agent.update_ls:
+                update_data_with_conn(db_conn,
+                        table_name='customer',
+                        new_data={'last_cid' : cid_record},
+                        where={'cid' : cid}
+                        )
 
         # 更新運行時間
         if reid_agent.timeout <= (time.time() - reid_agent.last_run_time):
