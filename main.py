@@ -4,6 +4,7 @@ from threading import Thread
 import argparse
 import pandas as pd
 from pandas import DataFrame
+import warnings
 
 # JDE
 from JDE.jde_start import jde_launch
@@ -15,11 +16,13 @@ from FaceRecog.horus_toolkit import UpdateTimer
 from FaceRecog.horus_toolkit import get_face_recog_helper
 from FaceRecog.horus_toolkit import sec_to_hms
 from FaceRecog.horus_toolkit.db_tool import get_db_conn
+from FaceRecog.Facer.ult import load_pkl
 
+warnings.filterwarnings('ignore')
 
 # >>>>>> listened variables >>>>>>
 def get_latest_cus_df(cus_df_path='customer.pkl') -> DataFrame:
-    return pd.read_pickle(cus_df_path)
+    return load_pkl(cus_df_path)
 
 
 # <<<<<< listened variables <<<<<<
@@ -63,7 +66,7 @@ def launch_face_recog():
     while work_flag:
         # check update status
         latest_cus_df = get_latest_cus_df()
-        if get_latest_cus_df() != last_df:
+        if latest_cus_df.values.tolist() != last_df.values.tolist():
             # do face recognition
             fr_helper.recognize_df(latest_cus_df)
 
@@ -104,7 +107,7 @@ def launch_jde(opt):
 
 if __name__ == '__main__':
     pd.to_pickle(pd.DataFrame(
-        columns=['id', 'cid', 'last_id', 'mid', 'customer_img', 'enter_time', 'leave_time', 'created_at', 'updated_at']), 'customer_df.pkl')
+        columns=['id', 'cid', 'last_id', 'mid', 'customer_img', 'enter_time', 'leave_time', 'created_at', 'updated_at']), 'customer.pkl')
     parser = argparse.ArgumentParser(prog='demo.py')
     parser.add_argument('--cfg', type=str, default='JDE/cfg/yolov3_1088x608.cfg', help='cfg file path')
     parser.add_argument('--weights', type=str, default='JDE/weights/weight.pt', help='path to weights file')
