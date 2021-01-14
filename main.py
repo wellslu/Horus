@@ -31,6 +31,9 @@ def get_latest_cus_df(cus_df_path='customer.pkl') -> DataFrame:
     # return load_pkl(cus_df_path)
     return cus_df_ls[0]
 
+def get_latest_cus_status(cus_df_path='customer.pkl') -> DataFrame:
+    # return load_pkl(cus_df_path)
+    return cus_df_ls[1]
 # <<<<<< listened variables <<<<<<
 
 
@@ -72,10 +75,10 @@ def launch_reid():
             #             new_data={'last_cid' : cid_record},
             #             where={'cid' : cid}
             #             )
-
-            exe_query_many(db_conn,
-                            query="UPDATE customer SET last_cid = %s WHERE cid = %s ",
-                            data=[(v,i) for i,v in reid_agent.update_ls])
+            if len(reid_agent.update_ls) != 0:
+                exe_query_many(db_conn,
+                                query="UPDATE customer SET last_cid = %s WHERE cid = %s ",
+                                data=[(v,i) for i,v in reid_agent.update_ls])
             
         else:
             print(f'[Reid][INFO] - waiting on epoch{epoch}/{max_epoch}')
