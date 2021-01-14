@@ -171,5 +171,5 @@ if __name__ == '__main__':
     face_recog_thread = Thread(target=launch_face_recog)
     face_recog_thread.start()
 
-    reid_thread = Thread(target=launch_reid))
+    reid_thread = Thread(target=launch_reid)
     reid_thread.start()
