@@ -4,7 +4,7 @@ import os
 import time
 import pandas as pd
 from JDE.utils.utils import mkdir_if_missing
-from JDE.utils.sql import SQL # 2021/1/14 by 彥南
+from JDE.utils.sql import SQL
 
 def tlwhs_to_tlbrs(tlwhs):
     tlbrs = np.copy(tlwhs)
@@ -30,6 +30,7 @@ def resize_image(image, max_size=800):
 
 
 def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_id=0, fps=0., ids2=None):
+    opt.customer[1] = False
     cutomer_table = pd.DataFrame(sql.read_cutomer_table())
 
     im = np.ascontiguousarray(np.copy(image))
@@ -57,14 +58,12 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
             sql_code = f'''UPDATE customer 
                                         SET leave_time={frame_id}
                                         WHERE cid=\'{obj_id}\''''
-            # >>>>>>>>>> 2021/1/14 by 彥南 >>>>>>>>>>>
             try:
                 sql.write_cutomer_table(sql_code)
             except Exception as e :
                 print(e)
                 time.sleep(0.2)
                 sql = SQL()
-            # >>>>>>>>>> 2021/1/14 by 彥南 >>>>>>>>>>>
             
         else:
             sql_code = f'''INSERT INTO `customer` (`cid`, `customer_img`, `enter_time`, `leave_time`) 
@@ -97,6 +96,7 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
             cv2.putText(im, f'cid : {id_text}   mid : {mid}', (intbox[0], intbox[1] + 30),
                         cv2.FONT_HERSHEY_PLAIN, text_scale, (208, 216, 129), thickness=text_thickness)
     opt.customer[0] = cutomer_table
+    opt.customer[1] = True
     return im
 
 
