@@ -86,26 +86,25 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
         else:
             mid = None
         if len(df) != 0 and list(df['last_cid'])[0] is not None and list(df['last_cid'])[0] != -1 and not np.isnan(list(df['last_cid'])[0]):
-            id_text = str(int(list(df['last_cid'])[0]))
-            id_c = 1
+            last_id_text = str(int(list(df['last_cid'])[0]))
         else:
-            id_c = 0
+            last_id_text = None
         if ids2 is not None:
             id_text = id_text + ', {}'.format(int(ids2[i]))
         _line_thickness = 1 if obj_id <= 0 else line_thickness
         color = get_color(abs(int(str(obj_id)[-1])))
-        if mid is None:
-            cv2.rectangle(im, intbox[0:2], intbox[2:4], color=color, thickness=line_thickness)
-            cv2.putText(im, str(id_text), (intbox[0], intbox[1] + 30), cv2.FONT_HERSHEY_PLAIN,
-                        text_scale, (0, 0, 255), thickness=text_thickness)
-        elif id_c == 1:
-            cv2.rectangle(im, intbox[0:2], intbox[2:4], (30, 255, 255), thickness=line_thickness)
-            cv2.putText(im, str(id_text), (intbox[0], intbox[1] + 30), cv2.FONT_HERSHEY_PLAIN,
-                        text_scale, (30, 255, 255), thickness=text_thickness)
-        else:
+        if mid is not None:
             cv2.rectangle(im, intbox[0:2], intbox[2:4], (208, 216, 129), thickness=line_thickness)
             cv2.putText(im, f'cid : {id_text}   mid : {mid}', (intbox[0], intbox[1] + 30),
                         cv2.FONT_HERSHEY_PLAIN, text_scale, (208, 216, 129), thickness=text_thickness)
+        elif last_id_text is not None:
+            cv2.rectangle(im, intbox[0:2], intbox[2:4], (255, 255, 0), thickness=line_thickness)
+            cv2.putText(im, last_id_text, (intbox[0], intbox[1] + 30), cv2.FONT_HERSHEY_PLAIN,
+                        text_scale, (255, 255, 0), thickness=text_thickness)
+        else:
+            cv2.rectangle(im, intbox[0:2], intbox[2:4], color=color, thickness=line_thickness)
+            cv2.putText(im, id_text, (intbox[0], intbox[1] + 30), cv2.FONT_HERSHEY_PLAIN,
+                        text_scale, (0, 0, 255), thickness=text_thickness)
     opt.customer[0] = customer_table
     opt.customer[1] = True
     return im
