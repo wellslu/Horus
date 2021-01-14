@@ -49,6 +49,9 @@ class Agent:
         self.task_queue = SimpleQueue() # item in queue : [(cid, customer_img)] # methon: qsize(), empty(), put(), get()
 
         self.customer_record = pd.DataFrame()
+        
+    def clear_update_ls(self):
+        self.update_ls = []
 
     def get_new_update(self, data:pd.DataFrame):
         # self.data_track = data.copy()
