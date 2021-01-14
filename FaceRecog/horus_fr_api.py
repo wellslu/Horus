@@ -16,8 +16,10 @@ from FaceRecog.Facer import FaceCapturer, LMKScanner, AGFaceRecog
 from pymysql.connections import Connection
 from imutils.paths import list_images
 from .Facer.shortcut import get_face_grid_from_portrait, get_face_encoding
+from .thirdparty.IIIDDFA.get_pose import get_pose
 
 IMG_COUNT_THRESH = 1
+FACE_POSE_THRESH = 30
 
 
 def get_mf_data(conn: Connection, table_name='member', db_name=None) -> dict:
@@ -59,10 +61,20 @@ def do_face_pipeline(img_path: str, face_capturer: FaceCapturer, lmk_scanner: LM
     """
     face_grid = get_face_grid_from_portrait(img_path, face_capturer, lmk_scanner)
     if face_grid is None:
+        msg = f"[FACE-PIPELINE] - Failed to fetch face grid. Image: {img_path}"
+        print(msg)
+        return
+
+    yaw, pitch, roll = get_pose(face_grid)
+    if yaw > FACE_POSE_THRESH or pitch > FACE_POSE_THRESH:
+        msg = f"[FACE-PIPELINE] - The face pose is out of threshold({FACE_POSE_THRESH}). Image: {img_path}"
+        print(msg)
         return
 
     face_encoding = get_face_encoding(img_path, ag_face_recog)
     if face_encoding is None:
+        msg = f"[FACE-PIPELINE] - Failed to encode face. Image: {img_path}"
+        print(msg)
         return
 
     return face_encoding

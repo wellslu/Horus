@@ -2,7 +2,7 @@
 import time
 from threading import Thread
 
-from FaceRecog.horus_fr_api import get_mf_data, do_face_recog
+from FaceRecog.horus_fr_api import get_mf_data
 from FaceRecog.horus_toolkit.db_tool import get_db_conn
 from FaceRecog.horus_toolkit import FaceRecogHelper
 from FaceRecog.horus_toolkit import get_face_recog_helper
@@ -34,7 +34,6 @@ def launch_face_recog():
     customer_table_name = 'customer'
     listen_duration = 0.5  # minutes
     listen_duration *= 60
-    print(listen_duration)
 
     # pre-work (about 4 sec)
     fr_db_conn = get_db_conn()
