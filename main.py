@@ -1,4 +1,5 @@
 # coding: utf-8
+import os
 import time
 from threading import Thread
 import argparse
@@ -8,6 +9,7 @@ import warnings
 
 # ReID
 from ReID.reid_pipeline import Agent
+from ReID.utils import get_data
 
 # JDE
 from output_video import mk_video
@@ -55,18 +57,17 @@ def launch_reid():
         reid_agent.get_new_update(get_latest_cus_df())
 
         if reid_agent.task_queue.qsize()!=0:
-            print('[Reid][INFO] - working')
+            print(f'[Reid][INFO] - working on epoch{epoch}')
             reid_agent.run()
 
-        print('[Reid][INFO] - update db')
-
-        for cid, cid_record in reid_agent.update_ls:
-            update_data_with_conn(db_conn,
-                    table_name='customer',
-                    new_data={'last_cid' : cid_record},
-                    where={'cid' : cid}
-                    )
-
+            for cid, cid_record in reid_agent.update_ls:
+                update_data_with_conn(db_conn,
+                        table_name='customer',
+                        new_data={'last_cid' : cid_record},
+                        where={'cid' : cid}
+                        )
+        else:
+            print(f'[Reid][INFO] - waiting on epoch{epoch}')
         # 更新運行時間
         if reid_agent.timeout <= (time.time() - reid_agent.last_run_time):
             print('timeout - No operation within {} minutes'.format(reid_agent.timeout/60))
@@ -169,6 +170,9 @@ if __name__ == '__main__':
     parser.add_argument('--output-root', type=str, default='results', help='expected output root path')
     parser.add_argument('--customer', type=list, default=cus_df_ls)
     opt = parser.parse_args()
+
+    if not os.path.exists('video_2.mp4'):
+        get_data(path='video_2.mp4', file_id='1TubpGa5D4E-UqcJ3Pst5gE0BLe8kG96')
 
     mot_thread = Thread(target=launch_jde, args=(opt,))
     mot_thread.start()
