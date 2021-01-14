@@ -40,7 +40,7 @@ def launch_reid():
     reid_agent = Agent(
             output_folder="ReID/feature",
             model_file="ReID/pretrain",
-            example_img="ReID/TEST/test_img/reid_example.png",
+            example_img="TEST/test_img/reid_example.png",
             first_check_frame=12, 
             second_check_frame=50,
             timeout=600,
