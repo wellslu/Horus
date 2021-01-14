@@ -10,12 +10,12 @@ import cv2
 from tqdm import tqdm
 from imutils.paths import list_images
 
-def mk_video(video):
+def mk_video(opt):
     print('start')
     vt = VideoTool()
-    origin_video = vt.get_video_meta()
+    origin_video = vt.get_video_meta(opt.input_video)
     print(origin_video)
-    vt.images_to_video('results/frame', 'output.mp4', 60)
+    vt.images_to_video('results/frame', opt.output, 60)
 
 class VideoTool:
     CLIP_FILE_INDENT = 3

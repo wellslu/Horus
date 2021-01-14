@@ -174,7 +174,7 @@ def launch_face_recog():
 # >>>>>> mot module >>>>>>
 def launch_jde(opt):
     jde_launch(opt)
-    mk_video(opt.output)
+    mk_video(opt)
 # <<<<<< mot module <<<<<<
 
 
