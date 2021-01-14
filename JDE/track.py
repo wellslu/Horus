@@ -6,15 +6,15 @@ import argparse
 import motmetrics as mm
 
 import torch
-from tracker.multitracker import JDETracker
-from utils import visualization as vis
-from utils.log import logger
-from utils.timer import Timer
-from utils.evaluation import Evaluator
-from utils.parse_config import parse_model_cfg
-import utils.datasets as datasets
-from utils.utils import *
-from utils.sql import SQL
+from JDE.tracker.multitracker import JDETracker
+from JDE.utils import visualization as vis
+from JDE.utils.log import logger
+from JDE.utils.timer import Timer
+from JDE.utils.evaluation import Evaluator
+from JDE.utils.parse_config import parse_model_cfg
+import JDE.utils.datasets as datasets
+from JDE.utils.utils import *
+from JDE.utils.sql import SQL
 
 
 def write_results(filename, results, data_type):
@@ -86,21 +86,21 @@ def eval_seq(opt, dataloader, data_type, result_filename, cid_png=None, save_dir
     sql = SQL()
     for path, img, img0 in dataloader:
         if frame_id % 20 == 0:
-            logger.info('Processing frame {} ({:.2f} fps)'.format(frame_id, 1. / max(1e-5, timer.average_time)))
+            logger.info('Processing frame {} ({:.2f} fps)'.format(frame_id, 1./max(1e-5, timer.average_time)))
 
         # run tracking
         timer.tic()
         blob = torch.from_numpy(img).cuda().unsqueeze(0)
-        online_targets = tracker.update(blob, img0)
-        online_tlwhs = []
-        online_ids = []
-        for t in online_targets:
-            tlwh = t.tlwh
-            tid = t.track_id
-            vertical = tlwh[2] / tlwh[3] > 1.6
-            if tlwh[2] * tlwh[3] > opt.min_box_area and not vertical:
-                online_tlwhs.append(tlwh)
-                online_ids.append(tid)
+        online_ids, online_tlwhs = tracker.update(blob, img0)
+        # online_tlwhs = []
+        # online_ids = []
+        # for t in online_targets:
+        #     tlwh = t.tlwh
+        #     tid = t.track_id
+        #     vertical = tlwh[2] / tlwh[3] > 1.6
+        #     if tlwh[2] * tlwh[3] > opt.min_box_area and not vertical:
+        #         online_tlwhs.append(tlwh)
+        #         online_ids.append(tid)
         timer.toc()
         # save results
         results.append((frame_id + 1, online_tlwhs, online_ids))
@@ -116,7 +116,6 @@ def eval_seq(opt, dataloader, data_type, result_filename, cid_png=None, save_dir
     # save results
     write_results(result_filename, results, data_type)
     return frame_id, timer.average_time, timer.calls
-
 
 def main(opt, data_root='/data/MOT16/train', det_root=None, seqs=('MOT16-05',), exp_name='demo',
          save_images=False, save_videos=False, show_image=True):
@@ -134,13 +133,13 @@ def main(opt, data_root='/data/MOT16/train', det_root=None, seqs=('MOT16-05',), 
     n_frame = 0
     timer_avgs, timer_calls = [], []
     for seq in seqs:
-        output_dir = os.path.join(data_root, '..', 'outputs', exp_name, seq) if save_images or save_videos else None
+        output_dir = os.path.join(data_root, '..','outputs', exp_name, seq) if save_images or save_videos else None
 
         logger.info('start seq: {}'.format(seq))
         dataloader = datasets.LoadImages(osp.join(data_root, seq, 'img1'), opt.img_size)
         result_filename = os.path.join(result_root, '{}.txt'.format(seq))
-        meta_info = open(os.path.join(data_root, seq, 'seqinfo.ini')).read()
-        frame_rate = int(meta_info[meta_info.find('frameRate') + 10:meta_info.find('\nseqLength')])
+        meta_info = open(os.path.join(data_root, seq, 'seqinfo.ini')).read() 
+        frame_rate = int(meta_info[meta_info.find('frameRate')+10:meta_info.find('\nseqLength')])
         nf, ta, tc = eval_seq(opt, dataloader, data_type, result_filename,
                               save_dir=output_dir, show_image=show_image, frame_rate=frame_rate)
         n_frame += nf
@@ -174,6 +173,7 @@ def main(opt, data_root='/data/MOT16/train', det_root=None, seqs=('MOT16-05',), 
     Evaluator.save_summary(summary, os.path.join(result_root, 'summary_{}.xlsx'.format(exp_name)))
 
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='track.py')
     parser.add_argument('--cfg', type=str, default='cfg/z.cfg', help='cfg file path')
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     parser.add_argument('--save-videos', action='store_true', help='save tracking results (video)')
     opt = parser.parse_args()
     print(opt, end='\n\n')
-
+ 
     if not opt.test_mot16:
         seqs_str = '''MOT17-02-SDP
                       MOT17-04-SDP
@@ -215,5 +215,6 @@ if __name__ == '__main__':
          seqs=seqs,
          exp_name=opt.weights.split('/')[-2],
          show_image=False,
-         save_images=opt.save_images,
+         save_images=opt.save_images, 
          save_videos=opt.save_videos)
+

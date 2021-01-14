@@ -50,3 +50,4 @@ class BaseTrack(object):
 
     def mark_removed(self):
         self.state = TrackState.Removed
+

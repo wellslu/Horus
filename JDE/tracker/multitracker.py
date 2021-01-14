@@ -1,10 +1,11 @@
 from numba import jit
 from collections import deque
 import torch
-from utils.kalman_filter import KalmanFilter
-from utils.log import logger
-from models import *
-from tracker import matching
+import time
+from JDE.utils.kalman_filter import KalmanFilter
+from JDE.utils.log import logger
+from JDE.models import *
+from JDE.tracker import matching
 from .basetrack import BaseTrack, TrackState
 
 
@@ -59,7 +60,7 @@ class STrack(BaseTrack):
     def activate(self, kalman_filter, frame_id):
         """Start a new tracklet"""
         self.kalman_filter = kalman_filter
-        self.track_id = self.next_id()
+        self.track_id = int(str(hash(time.time()))[-2:] + str(self.next_id())[-2:])
         self.mean, self.covariance = self.kalman_filter.initiate(self.tlwh_to_xyah(self._tlwh))
 
         self.tracklet_len = 0
@@ -79,7 +80,7 @@ class STrack(BaseTrack):
         self.is_activated = True
         self.frame_id = frame_id
         if new_id:
-            self.track_id = self.next_id()
+            self.track_id = int(str(hash(time.time()))[-2:] + str(self.next_id())[-2:])
 
     def update(self, new_track, frame_id, update_feature=True):
         """
@@ -336,16 +337,40 @@ class JDETracker(object):
         self.removed_stracks.extend(removed_stracks)
         self.tracked_stracks, self.lost_stracks = remove_duplicate_stracks(self.tracked_stracks, self.lost_stracks)
 
-        # get scores of lost tracks
         output_stracks = [track for track in self.tracked_stracks if track.is_activated]
+        online_tlwhs = []
+        online_ids = []
+        for t in output_stracks:
+            tlwh = t.tlwh
+            vertical = tlwh[2] / tlwh[3] > 1.6
+            if tlwh[2] * tlwh[3] > self.opt.min_box_area and not vertical:
+                online_tlwhs.append(tlwh)
+                online_ids.append(t.track_id)
+        # for i in range(len(output_stracks)):
+        #     tlwh = output_stracks[i].tlwh
+        #     vertical = tlwh[2] / tlwh[3] > 1.6
+        #     if tlwh[2] * tlwh[3] > self.opt.min_box_area and not vertical:
+        #         x1, y1, w1, h1 = tlwh
+        #         for n in range(len(online_tlwhs)):
+        #             tlwh_n = online_tlwhs[n]
+        #             x2, y2, w2, h2 = tlwh_n
+        #             if i != n:
+        #                 if 0.3 < (w1*h1) / (w2*h2) < 3 and x2 < x1 + (w1/2) < x2+w2 and y2 < y1 + (h1/2) < y2+h2 and x1 < x2 + (w2/2) < x1+w1 and y1 < y2 + (h2/2) < y1+h1:
+        #                     output_stracks[i].track_id = int(str(hash(time.time()))[-2:] + str(output_stracks[i].track_id)[-2:])
+        #                     online_ids.append(output_stracks[i].track_id)
+        #                     continue
+        #         if len(online_ids) != i+1:
+        #             online_ids.append(output_stracks[i].track_id)
 
+        
+        # get scores of lost tracks
         logger.debug('===========Frame {}=========='.format(self.frame_id))
         logger.debug('Activated: {}'.format([track.track_id for track in activated_starcks]))
         logger.debug('Refind: {}'.format([track.track_id for track in refind_stracks]))
         logger.debug('Lost: {}'.format([track.track_id for track in lost_stracks]))
         logger.debug('Removed: {}'.format([track.track_id for track in removed_stracks]))
         # print('Final {} s'.format(t5-t4))
-        return output_stracks
+        return online_ids, online_tlwhs
 
 
 def joint_stracks(tlista, tlistb):

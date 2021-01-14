@@ -1,20 +1,18 @@
 import os
-from collections import defaultdict, OrderedDict
+from collections import defaultdict,OrderedDict
 
 import torch.nn as nn
 
-from utils.parse_config import *
-from utils.utils import *
+from JDE.utils.parse_config import *
+from JDE.utils.utils import *
 import time
 import math
 
 try:
-    from utils.syncbn import SyncBN
-
-    batch_norm = SyncBN  # nn.BatchNorm2d
+    from JDE.utils.syncbn import SyncBN
+    batch_norm=SyncBN #nn.BatchNorm2d
 except ImportError:
-    batch_norm = nn.BatchNorm2d
-
+    batch_norm=nn.BatchNorm2d
 
 def create_modules(module_defs):
     """
@@ -44,7 +42,7 @@ def create_modules(module_defs):
                 # BN is uniformly initialized by default in pytorch 1.0.1. 
                 # In pytorch>1.2.0, BN weights are initialized with constant 1,
                 # but we find with the uniform initialization the model converges faster.
-                nn.init.uniform_(after_bn.weight)
+                nn.init.uniform_(after_bn.weight) 
                 nn.init.zeros_(after_bn.bias)
             if module_def['activation'] == 'leaky':
                 modules.add_module('leaky_%d' % i, nn.LeakyReLU(0.1))
@@ -77,9 +75,9 @@ def create_modules(module_defs):
             anchors = [(anchors[i], anchors[i + 1]) for i in range(0, len(anchors), 2)]
             anchors = [anchors[i] for i in anchor_idxs]
             nC = int(module_def['classes'])  # number of classes
-            img_size = (int(hyperparams['width']), int(hyperparams['height']))
+            img_size = (int(hyperparams['width']),int(hyperparams['height']))
             # Define detection layer
-            yolo_layer = YOLOLayer(anchors, nC, int(hyperparams['nID']),
+            yolo_layer = YOLOLayer(anchors, nC, int(hyperparams['nID']), 
                                    int(hyperparams['embedding_dim']), img_size, yolo_layer_count)
             modules.add_module('yolo_%d' % i, yolo_layer)
             yolo_layer_count += 1
@@ -121,22 +119,24 @@ class YOLOLayer(nn.Module):
         self.anchors = torch.FloatTensor(anchors)
         self.nA = nA  # number of anchors (3)
         self.nC = nC  # number of classes (80)
-        self.nID = nID  # number of identities
+        self.nID = nID # number of identities
         self.img_size = 0
-        self.emb_dim = nE
+        self.emb_dim = nE 
         self.shift = [1, 3, 5]
 
-        self.SmoothL1Loss = nn.SmoothL1Loss()
+        self.SmoothL1Loss  = nn.SmoothL1Loss()
         self.SoftmaxLoss = nn.CrossEntropyLoss(ignore_index=-1)
         self.CrossEntropyLoss = nn.CrossEntropyLoss()
         self.IDLoss = nn.CrossEntropyLoss(ignore_index=-1)
-        self.s_c = nn.Parameter(-4.15 * torch.ones(1))  # -4.15
-        self.s_r = nn.Parameter(-4.85 * torch.ones(1))  # -4.85
-        self.s_id = nn.Parameter(-2.3 * torch.ones(1))  # -2.3
+        self.s_c = nn.Parameter(-4.15*torch.ones(1))  # -4.15
+        self.s_r = nn.Parameter(-4.85*torch.ones(1))  # -4.85
+        self.s_id = nn.Parameter(-2.3*torch.ones(1))  # -2.3
+        
+        self.emb_scale = math.sqrt(2) * math.log(self.nID-1) if self.nID>1 else 1
 
-        self.emb_scale = math.sqrt(2) * math.log(self.nID - 1) if self.nID > 1 else 1
+        
 
-    def forward(self, p_cat, img_size, targets=None, classifier=None, test_emb=False):
+    def forward(self, p_cat,  img_size, targets=None, classifier=None, test_emb=False):
         p, p_emb = p_cat[:, :24, ...], p_cat[:, 24:, ...]
         nB, nGh, nGw = p.shape[0], p.shape[-2], p.shape[-1]
 
@@ -148,8 +148,8 @@ class YOLOLayer(nn.Module):
                 self.anchor_wh = self.anchor_wh.cuda()
 
         p = p.view(nB, self.nA, self.nC + 5, nGh, nGw).permute(0, 1, 3, 4, 2).contiguous()  # prediction
-
-        p_emb = p_emb.permute(0, 2, 3, 1).contiguous()
+        
+        p_emb = p_emb.permute(0,2,3,1).contiguous()
         p_box = p[..., :4]
         p_conf = p[..., 4:6].permute(0, 4, 1, 2, 3)  # Conf
 
@@ -170,43 +170,43 @@ class YOLOLayer(nn.Module):
                 lbox = self.SmoothL1Loss(p_box[mask], tbox[mask])
             else:
                 FT = torch.cuda.FloatTensor if p_conf.is_cuda else torch.FloatTensor
-                lbox, lconf = FT([0]), FT([0])
-            lconf = self.SoftmaxLoss(p_conf, tconf)
+                lbox, lconf =  FT([0]), FT([0])
+            lconf =  self.SoftmaxLoss(p_conf, tconf)
             lid = torch.Tensor(1).fill_(0).squeeze().cuda()
-            emb_mask, _ = mask.max(1)
-
+            emb_mask,_ = mask.max(1)
+            
             # For convenience we use max(1) to decide the id, TODO: more reseanable strategy
-            tids, _ = tids.max(1)
+            tids,_ = tids.max(1) 
             tids = tids[emb_mask]
             embedding = p_emb[emb_mask].contiguous()
             embedding = self.emb_scale * F.normalize(embedding)
             nI = emb_mask.sum().float()
-
-            if test_emb:
-                if np.prod(embedding.shape) == 0 or np.prod(tids.shape) == 0:
-                    return torch.zeros(0, self.emb_dim + 1).cuda()
+            
+            if  test_emb:
+                if np.prod(embedding.shape)==0  or np.prod(tids.shape) == 0:
+                    return torch.zeros(0, self.emb_dim+1).cuda()
                 emb_and_gt = torch.cat([embedding, tids.float()], dim=1)
                 return emb_and_gt
-
+            
             if len(embedding) > 1:
                 logits = classifier(embedding).contiguous()
-                lid = self.IDLoss(logits, tids.squeeze())
+                lid =  self.IDLoss(logits, tids.squeeze())
 
             # Sum loss components
-            loss = torch.exp(-self.s_r) * lbox + torch.exp(-self.s_c) * lconf + torch.exp(-self.s_id) * lid + \
+            loss = torch.exp(-self.s_r)*lbox + torch.exp(-self.s_c)*lconf + torch.exp(-self.s_id)*lid + \
                    (self.s_r + self.s_c + self.s_id)
             loss *= 0.5
 
             return loss, loss.item(), lbox.item(), lconf.item(), lid.item(), nT
 
         else:
-            p_conf = torch.softmax(p_conf, dim=1)[:, 1, ...].unsqueeze(-1)
-            p_emb = F.normalize(p_emb.unsqueeze(1).repeat(1, self.nA, 1, 1, 1).contiguous(), dim=-1)
-            # p_emb_up = F.normalize(shift_tensor_vertically(p_emb, -self.shift[self.layer]), dim=-1)
-            # p_emb_down = F.normalize(shift_tensor_vertically(p_emb, self.shift[self.layer]), dim=-1)
-            p_cls = torch.zeros(nB, self.nA, nGh, nGw, 1).cuda()  # Temp
+            p_conf = torch.softmax(p_conf, dim=1)[:,1,...].unsqueeze(-1)
+            p_emb = F.normalize(p_emb.unsqueeze(1).repeat(1,self.nA,1,1,1).contiguous(), dim=-1)
+            #p_emb_up = F.normalize(shift_tensor_vertically(p_emb, -self.shift[self.layer]), dim=-1)
+            #p_emb_down = F.normalize(shift_tensor_vertically(p_emb, self.shift[self.layer]), dim=-1)
+            p_cls = torch.zeros(nB,self.nA,nGh,nGw,1).cuda()               # Temp
             p = torch.cat([p_box, p_conf, p_cls, p_emb], dim=-1)
-            # p = torch.cat([p_box, p_conf, p_cls, p_emb, p_emb_up, p_emb_down], dim=-1)
+            #p = torch.cat([p_box, p_conf, p_cls, p_emb, p_emb_up, p_emb_down], dim=-1)
             p[..., :4] = decode_delta_map(p[..., :4], self.anchor_vec.to(p))
             p[..., :4] *= self.stride
 
@@ -220,7 +220,7 @@ class Darknet(nn.Module):
         super(Darknet, self).__init__()
         if isinstance(cfg_dict, str):
             cfg_dict = parse_model_cfg(cfg_dict)
-        self.module_defs = cfg_dict
+        self.module_defs = cfg_dict 
         self.module_defs[0]['nID'] = nID
         self.img_size = [int(self.module_defs[0]['width']), int(self.module_defs[0]['height'])]
         self.emb_dim = int(self.module_defs[0]['embedding_dim'])
@@ -230,15 +230,17 @@ class Darknet(nn.Module):
         for ln in self.loss_names:
             self.losses[ln] = 0
         self.test_emb = test_emb
+        
+        self.classifier = nn.Linear(self.emb_dim, nID) if nID>0 else None
 
-        self.classifier = nn.Linear(self.emb_dim, nID) if nID > 0 else None
+
 
     def forward(self, x, targets=None, targets_len=None):
         self.losses = OrderedDict()
         for ln in self.loss_names:
             self.losses[ln] = 0
         is_training = (targets is not None) and (not self.test_emb)
-        # img_size = x.shape[-1]
+        #img_size = x.shape[-1]
         layer_outputs = []
         output = []
 
@@ -257,13 +259,13 @@ class Darknet(nn.Module):
                 x = layer_outputs[-1] + layer_outputs[layer_i]
             elif mtype == 'yolo':
                 if is_training:  # get loss
-                    targets = [targets[i][:int(l)] for i, l in enumerate(targets_len)]
+                    targets = [targets[i][:int(l)] for i,l in enumerate(targets_len)]
                     x, *losses = module[0](x, self.img_size, targets, self.classifier)
                     for name, loss in zip(self.loss_names, losses):
                         self.losses[name] += loss
                 elif self.test_emb:
                     if targets is not None:
-                        targets = [targets[i][:int(l)] for i, l in enumerate(targets_len)]
+                        targets = [targets[i][:int(l)] for i,l in enumerate(targets_len)]
                     x = module[0](x, self.img_size, targets, self.classifier, self.test_emb)
                 else:  # get detections
                     x = module[0](x, self.img_size)
@@ -271,33 +273,31 @@ class Darknet(nn.Module):
             layer_outputs.append(x)
 
         if is_training:
-            self.losses['nT'] /= 3
+            self.losses['nT'] /= 3 
             output = [o.squeeze() for o in output]
             return sum(output), torch.Tensor(list(self.losses.values())).cuda()
         elif self.test_emb:
             return torch.cat(output, 0)
         return torch.cat(output, 1)
 
-
 def shift_tensor_vertically(t, delta):
     # t should be a 5-D tensor (nB, nA, nH, nW, nC)
     res = torch.zeros_like(t)
     if delta >= 0:
-        res[:, :, :-delta, :, :] = t[:, :, delta:, :, :]
+        res[:,:, :-delta, :, :] = t[:,:, delta:, :, :]
     else:
-        res[:, :, -delta:, :, :] = t[:, :, :delta, :, :]
-    return res
-
+        res[:,:, -delta:, :, :] = t[:,:, :delta, :, :]
+    return res 
 
 def create_grids(self, img_size, nGh, nGw):
-    self.stride = img_size[0] / nGw
+    self.stride = img_size[0]/nGw
     assert self.stride == img_size[1] / nGh, \
-        "{} v.s. {}/{}".format(self.stride, img_size[1], nGh)
+            "{} v.s. {}/{}".format(self.stride, img_size[1], nGh)
 
     # build xy offsets
     grid_x = torch.arange(nGw).repeat((nGh, 1)).view((1, 1, nGh, nGw)).float()
-    grid_y = torch.arange(nGh).repeat((nGw, 1)).transpose(0, 1).view((1, 1, nGh, nGw)).float()
-    # grid_y = grid_x.permute(0, 1, 3, 2)
+    grid_y = torch.arange(nGh).repeat((nGw, 1)).transpose(0,1).view((1, 1, nGh, nGw)).float()
+    #grid_y = grid_x.permute(0, 1, 3, 2)
     self.grid_xy = torch.stack((grid_x, grid_y), 4)
 
     # build wh gains

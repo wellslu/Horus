@@ -2,6 +2,7 @@
 import numpy as np
 import scipy.linalg
 
+
 """
 Table for the 0.95 quantile of the chi-square distribution with N degrees of
 freedom (contains values for N=1, ..., 9). Taken from MATLAB/Octave's chi2inv
@@ -149,7 +150,7 @@ class KalmanFilter(object):
         covariance = np.linalg.multi_dot((
             self._update_mat, covariance, self._update_mat.T))
         return mean, covariance + innovation_cov
-
+    
     def multi_predict(self, mean, covariance):
         """Run Kalman filter prediction step (Vectorized version).
 
@@ -180,14 +181,14 @@ class KalmanFilter(object):
             1e-5 * np.ones_like(mean[:, 3]),
             self._std_weight_velocity * mean[:, 3]]
         sqr = np.square(np.r_[std_pos, std_vel]).T
-
+        
         motion_cov = []
         for i in range(len(mean)):
             motion_cov.append(np.diag(sqr[i]))
         motion_cov = np.asarray(motion_cov)
-
+            
         mean = np.dot(mean, self._motion_mat.T)
-        left = np.dot(self._motion_mat, covariance).transpose((1, 0, 2))
+        left = np.dot(self._motion_mat, covariance).transpose((1,0,2))
         covariance = np.dot(left, self._motion_mat.T) + motion_cov
 
         return mean, covariance
@@ -260,7 +261,7 @@ class KalmanFilter(object):
         if only_position:
             mean, covariance = mean[:2], covariance[:2, :2]
             measurements = measurements[:, :2]
-
+        
         d = measurements - mean
         if metric == 'gaussian':
             return np.sum(d * d, axis=1)
@@ -273,3 +274,4 @@ class KalmanFilter(object):
             return squared_maha
         else:
             raise ValueError('invalid distance metric')
+
