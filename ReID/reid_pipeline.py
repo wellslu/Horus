@@ -58,7 +58,8 @@ class Agent:
         new = data.copy()
         new['frame_num'] = new['leave_time'] - new['enter_time']
         new = new[new['frame_num'] >= self.first_check_frame]
-        track = new[(~new['cid'].isin(self.finish_dt.keys())) & (~new['cid'].isin(self.blank_out_ls))]
+        # track = new[(~new['cid'].isin(self.finish_dt.keys())) & (~new['cid'].isin(self.blank_out_ls))]
+        track = new[(~new['cid'].isin(self.blank_out_ls))]
 
         for cid, img_path, leave_time, frame_num in track[['cid', 'customer_img', 'leave_time', 'frame_num']].values:
             if cid in self.track_record_dt.keys():
@@ -77,11 +78,12 @@ class Agent:
                     else:
                         # 符合 50 張 -> second check
                         self.task_queue.put((cid, img_path))
-                        self.finish_dt.update({cid:img_path})
-                        self.finish_ls.append(cid)
+                        # self.finish_ls.append(cid)
                     
             else:
                 # first check
+                self.finish_ls.append(cid)
+                self.finish_dt.update({cid:img_path})
                 self.track_record_dt.update({cid:{'img_path':img_path, 'leave_time':leave_time, 'count':0}})
                 self.task_queue.put((cid, img_path))
 
@@ -94,8 +96,8 @@ class Agent:
             for cid_record in self.finish_ls[::-1]:
                 cid_record_path = self.finish_dt[cid_record]
                 output = self.demo.match_two_folder(path, cid_record_path, output_folder=self.output_folder, 
-                                                sim_threshold=0.8, sup_threshold=0.9, sample_nums=5, sample_in_bin=3)
-                if output['Result']['match_result']:
+                                                sim_threshold=0.6, sup_threshold=0.6, sample_nums=5, sample_in_bin=3)
+                if (output['Result']['match_result']) & (cid!=cid_record):
                     self.update_ls.append((cid, cid_record))
                     break
 
