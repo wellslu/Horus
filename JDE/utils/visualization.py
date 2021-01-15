@@ -98,7 +98,6 @@ def plot_tracking(image, cid_png, tlwhs, obj_ids, sql, opt, scores=None, frame_i
             cv2.putText(im, f'cid : {id_text}   mid : {mid}', (intbox[0], intbox[1] + 30),
                         cv2.FONT_HERSHEY_PLAIN, text_scale, (208, 216, 129), thickness=text_thickness)
         elif last_id_text is not None:
-            cv2.rectangle(im, intbox[0:2], intbox[2:4], (255, 255, 0), thickness=line_thickness)
             cv2.rectangle(im, intbox[0:2], intbox[2:4], (0, 255, 255), thickness=line_thickness)
             cv2.putText(im, last_id_text, (intbox[0], intbox[1] + 30), cv2.FONT_HERSHEY_PLAIN,
                         text_scale, (0, 255, 255), thickness=text_thickness)
