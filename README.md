@@ -54,14 +54,19 @@ pip install -r requirements.txt
 ```
 
 ### How to use
-####  `ReID.utils.get_data` 
+####  1. `ReID.utils.get_data` 
+download pretrain model on google drive.
 ```python
 from ReID.utils import get_data
+
+get_data(path="pretrain")
 ```
-####  `ReID.reid_pipeline.Agent` 
+
+####  2. `ReID.reid_pipeline.Agent` 
 Keep track of DB data and send back the people who have exceeded the threshold.
 ```python
 from ReID.reid_pipeline import Agent
+
 
 update_freq = 5 # second
 max_epoch = 10000
@@ -89,40 +94,31 @@ while True:
         time.sleep(update_freq)
         new_data = get_latest_cus_df()
 
-    # 導入新資料，偵測到的新資料會自動加入到 reid_agent.task_queue 中等待
+    # 導入新資料，偵測到的新資料會自動加入到任務列表(reid_agent.task_queue)中等待
     reid_agent.get_new_update(new_data)
 
-    
+    # 當任務列表(reid_agent.task_queue)中有任務，就啟動模型計算新資料與舊資料間的相似度，將結果加入更新列表(reid_agent.update_ls)。
     if reid_agent.task_queue.qsize()!=0:
         print(f'[Reid][INFO] - working on epoch{epoch}/{max_epoch}')
         reid_agent.run()
-            
-    elif len(reid_agent.update_ls) != 0:
+
+    # 當更新列表(reid_agent.update_ls)中有待更新的任務，更新新的資料到 DB。
+    if len(reid_agent.update_ls) != 0:
         print(f'[Reid][INFO] - updating on epoch{epoch}/{max_epoch} - {reid_agent.update_ls}')
 
         while get_latest_cus_status() == False:
             time.sleep(2)
                 
-
-        exe_query_many(db_conn,
-                            query="UPDATE customer SET `last_cid` = %s WHERE `cid` = %s",
-                            data=[(v,i) for i,v in reid_agent.update_ls])
-        db_conn.commit()
-        if len(reid_agent.update_ls) == 0:
-            reid_agent.clear_update_ls()
-
-    else:
-        print(f'[Reid][INFO] - waiting on epoch{epoch}/{max_epoch}')
-        # 更新運行時間
+        """ write your DB update flow"""
         
-    if reid_agent.timeout <= (time.time() - reid_agent.last_run_time):
-        print('timeout - No operation within {} minutes'.format(reid_agent.timeout/60))
-        break
+        reid_agent.clear_update_ls()
 
+    # 當 epoch 執行時間 小於 update_freq，等待到 update_freq 時間到
     epoch_run_time = time.time() - epoch_start_time
     if  epoch_run_time < update_freq:
         time.sleep(update_freq - epoch_run_time)
-            
+    
+    # 紀錄第幾個 epoch，當達到最大值。則停止追蹤
     epoch+=1
     if epoch > max_epoch:
         break
