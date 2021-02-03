@@ -49,11 +49,84 @@ conda create --name horus python=3.7 -y
 ### Folder : ```ReID```
 
 ### Prerequisite
-```
+```shell script
+pip install -r requirements.txt
 ```
 
 ### How to use
+####  `ReID.utils.get_data` 
+```python
+from ReID.utils import get_data
 ```
+####  `ReID.reid_pipeline.Agent` 
+Keep track of DB data and send back the people who have exceeded the threshold.
+```python
+from ReID.reid_pipeline import Agent
+
+update_freq = 5 # second
+max_epoch = 10000
+db_conn = YOUR DB CONNECT
+
+def get_latest_cus_df():
+    """write your own load data methon. (return: pd.dataframe)"""
+    return data
+    
+reid_agent = Agent(
+            output_folder="ReID/feature",
+            model_file="ReID/pretrain",
+            example_img="TEST/test_img/reid_example.png",
+            first_check_frame=12, 
+            second_check_frame=50,
+            timeout=600,
+            frame_dead_num=10
+)
+
+epoch = 0
+while True:
+    epoch_start_time = time.time()
+    new_data = get_latest_cus_df()
+    while new_data.shape[0] == 0:
+        time.sleep(update_freq)
+        new_data = get_latest_cus_df()
+
+    # 導入新資料，偵測到的新資料會自動加入到 reid_agent.task_queue 中等待
+    reid_agent.get_new_update(new_data)
+
+    
+    if reid_agent.task_queue.qsize()!=0:
+        print(f'[Reid][INFO] - working on epoch{epoch}/{max_epoch}')
+        reid_agent.run()
+            
+    elif len(reid_agent.update_ls) != 0:
+        print(f'[Reid][INFO] - updating on epoch{epoch}/{max_epoch} - {reid_agent.update_ls}')
+
+        while get_latest_cus_status() == False:
+            time.sleep(2)
+                
+
+        exe_query_many(db_conn,
+                            query="UPDATE customer SET `last_cid` = %s WHERE `cid` = %s",
+                            data=[(v,i) for i,v in reid_agent.update_ls])
+        db_conn.commit()
+        if len(reid_agent.update_ls) == 0:
+            reid_agent.clear_update_ls()
+
+    else:
+        print(f'[Reid][INFO] - waiting on epoch{epoch}/{max_epoch}')
+        # 更新運行時間
+        
+    if reid_agent.timeout <= (time.time() - reid_agent.last_run_time):
+        print('timeout - No operation within {} minutes'.format(reid_agent.timeout/60))
+        break
+
+    epoch_run_time = time.time() - epoch_start_time
+    if  epoch_run_time < update_freq:
+        time.sleep(update_freq - epoch_run_time)
+            
+    epoch+=1
+    if epoch > max_epoch:
+        break
+            
 ```
 <br>
 
