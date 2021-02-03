@@ -62,6 +62,7 @@ from ReID.utils import get_data
 get_data(path="pretrain")
 ```
 ####  2. `ReID.reid.ReidMatch`
+Modules that use models to compute photos
 ```python
 from ReID.reid import ReidMatch
 
