@@ -61,8 +61,31 @@ from ReID.utils import get_data
 
 get_data(path="pretrain")
 ```
+####  2. `ReID.reid.ReidMatch`
+```python
+from ReID.reid import ReidMatch
 
-####  2. `ReID.reid_pipeline.Agent` 
+demo = ReidMatch(model_file="ReID/pretrain_model",
+                 example_img="ReID/predict/img_example.png", # image to warm up model.
+                 parallel=False)
+
+# 使用 Reid 模型將行人照片轉換成特徵向量
+img_path = PATH TO YOUR IMG
+img_feature = demo.image_to_feature(img_path) 
+
+# 計算 a、b 兩個向量之間的余弦相似度
+demo.cosine_similarity(a, b)
+
+# 比較兩個資料夾底下的圖片之間相似度。(本專案將比較的資料夾定義為一段追蹤，也就是說每段追蹤會存在同個資料夾底下)
+result = demo.match_two_folder('data/1', 'data/2', output_folder="demo/test", 
+                                result_output="demo/test/test.json", result_table_output="demo/test/test.csv", 
+                                sim_threshold=0.8, sup_threshold=0.9, sample_nums=5, sample_in_bin=3)
+                                
+# 比較路徑底下的所有資料夾間的關係。(本專案將比較的資料夾定義為一段追蹤，也就是說每段追蹤會存在同個資料夾底下)
+df, gp_result = demo.match_folders_under_path(root_path="data", output_path="demo/pairtest",
+                                       sim_threshold=0.6, sup_threshold=0.7, sample_nums=5, sample_in_bin=3) 
+```
+####  3. `ReID.reid_pipeline.Agent` 
 Keep track of DB data and send back the people who have exceeded the threshold.
 ```python
 from ReID.reid_pipeline import Agent
@@ -70,20 +93,19 @@ from ReID.reid_pipeline import Agent
 
 update_freq = 5 # second
 max_epoch = 10000
-db_conn = YOUR DB CONNECT
 
 def get_latest_cus_df():
     """write your own load data methon. (return: pd.dataframe)"""
     return data
     
 reid_agent = Agent(
-            output_folder="ReID/feature",
-            model_file="ReID/pretrain",
-            example_img="TEST/test_img/reid_example.png",
-            first_check_frame=12, 
-            second_check_frame=50,
-            timeout=600,
-            frame_dead_num=10
+            output_folder="ReID/feature", # 已跑過照片特徵儲存路徑。
+            model_file="ReID/pretrain", # 預訓練模型路徑
+            example_img="TEST/test_img/reid_example.png", # Reid 模型的測試照片
+            first_check_frame=12, # 第一次檢查門檻
+            second_check_frame=50, # 第二次檢查門檻
+            timeout=600, # 斷開時間
+            frame_dead_num=10 # 超過 10 個 frame 未更新時認定該追蹤結束。
 )
 
 epoch = 0
