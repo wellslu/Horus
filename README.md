@@ -45,6 +45,9 @@ pip install -r requirements.txt
 python (main_file).py --input-video path/to/your/input/video --weights path/to/model/weights
                --output-format video --output-root path/to/output/root
 ```
+
+### reference
+https://github.com/Zhongdao/Towards-Realtime-MOT
 <br>
 
 ## II. PERSON REID
