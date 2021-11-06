@@ -41,7 +41,9 @@ pip install -r requirements.txt
 ```
 
 ### How to use
-```
+```shell script
+python (main_file).py --input-video path/to/your/input/video --weights path/to/model/weights
+               --output-format video --output-root path/to/output/root
 ```
 <br>
 
