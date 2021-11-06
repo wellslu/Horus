@@ -36,7 +36,8 @@ conda create --name horus python=3.7 -y
 - https://drive.google.com/uc?id=1WxPH6WgMPQeOgrkqEu72puAxG82FRb__
 
 ### Prerequisite
-```
+```shell script
+pip install -r requirements.txt
 ```
 
 ### How to use
